@@ -1,0 +1,14 @@
+build/
+
+vcpkg_installed/
+
+.vs/
+*.user
+*.suo
+*.db
+*.opendb
+
+*.exe
+*.dll
+*.pdb
+*.obj
