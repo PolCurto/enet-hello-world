@@ -2,6 +2,7 @@
   "name": "enet-hello-world",
   "version-string": "0.1.0",
   "dependencies": [
-    "enet"
+    "enet",
+    "raylib"
   ]
 }
