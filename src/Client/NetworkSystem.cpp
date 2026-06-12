@@ -1,6 +1,11 @@
 #include "NetworkSystem.h"
 
 #include <iostream>
+#include <enet/enet.h>
+
+#include "EngineContext.h"
+#include "InputSystem.h"
+#include "Globals.h"
 
 NetworkSystem::NetworkSystem()
 {
@@ -62,32 +67,46 @@ bool NetworkSystem::Init()
     return true;
 }
 
-void NetworkSystem::Update()
+GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
-    // Enviar un mensaje
-    const char* message = "�Hola Servidor! Soy tu cliente en C++.";
+    PlayerInputPacket inputData;
+    inputData.up = engineContext.inputSystem->up;
+    inputData.down = engineContext.inputSystem->down;
 
-    // Crear el paquete pasando los bytes, el tama�o (incluyendo el \0) y la flag de FIABLE (estilo TCP)
-    ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+    if (inputData.up || inputData.down)
+    {
+        std::cout << "[CLIENTE] Enviando datos de juego: Up=" << inputData.up << ", Down=" << inputData.down << "\n";
 
-    // Enviar el paquete al peer por el Canal 0
-    enet_peer_send(peer, 0, packet);
+        ENetPacket* packet = enet_packet_create(&inputData, sizeof(inputData), ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(peer, 0, packet);
 
-    // Forzar a ENet a que env�e los paquetes retenidos en el buffer inmediatamente
-    enet_host_flush(client);
-    std::cout << "[CLIENTE] Mensaje enviado.\n";
+        enet_host_flush(client);
+        std::cout << "[CLIENTE] Mensaje enviado.\n";
 
-    // Esperar un momento para asegurar el env�o y luego desconectar
+	}
+
+    // Listen to the server (Split in methods in the future)
     ENetEvent event;
-    enet_host_service(client, &event, 1000);
-    enet_peer_disconnect(peer, 0);
+    while (enet_host_service(client, &event, 0) > 0)
+    {
+        switch (event.type) {
+        case ENET_EVENT_TYPE_RECEIVE:
+            // Aquí el servidor nos devuelve la nueva posición
+            std::cout << "[CLIENTE] Datos de juego recibidos.\n";
+            enet_packet_destroy(event.packet);
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
+            std::cout << "[CLIENTE] Desconectado.\n";
+            break;
+        }
+    }
+    return GameState::Update;
 }
 
 void NetworkSystem::Exit()
 {
     // Procesar la desconexi�n
-    ENetEvent event;
-    enet_host_service(client, &event, 1000);
+    enet_peer_disconnect(peer, 0);
 
     enet_host_destroy(client);
 }

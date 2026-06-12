@@ -3,6 +3,9 @@
 #include "raylib.h"
 #include <iostream>
 
+#include "Globals.h"
+#include "EngineContext.h"
+
 InputSystem::InputSystem()
 {
 }
@@ -11,20 +14,34 @@ InputSystem::~InputSystem()
 {
 }
 
-void InputSystem::Update()
+bool InputSystem::Init()
+{
+	return true;
+}
+
+GameState InputSystem::Update(const EngineContext& context)
 {
 	PollKeyboard();
+
+	return GameState::Update;
 }
 
 void InputSystem::PollKeyboard()
 {
-	if (IsKeyDown(KEY_DOWN))
+	down = IsKeyPressed(KEY_DOWN);
+	up = IsKeyPressed(KEY_UP);
+
+	if (down)
 	{
-		std::cout << "Abajo" << std::endl;
+		std::cout << "[CLIENTE] Tecla Abajo presionada.\n";
+	}
+	if (up)
+	{
+		std::cout << "[CLIENTE] Tecla Arriba presionada.\n";
 	}
 
-	if (IsKeyDown(KEY_UP))
+	if (IsKeyPressed(KEY_W))
 	{
-		std::cout << "Arriba" << std::endl;
+		std::cout << "[CLIENTE] Tecla W presionada.\n";
 	}
 }

@@ -2,6 +2,15 @@
 
 #include <enet/enet.h>
 
+enum class GameState;
+struct EngineContext;
+
+struct PlayerInputPacket 
+{
+	bool up;
+	bool down;
+};
+
 class NetworkSystem
 {
 public:
@@ -9,7 +18,7 @@ public:
 	~NetworkSystem();
 
 	bool Init();
-	void Update();
+	GameState Update(const EngineContext& engineContext);
 	void Exit();
 
 private:

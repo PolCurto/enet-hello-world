@@ -21,6 +21,7 @@ target_link_libraries(GameServer PRIVATE
 # --- CONFIGURACIÓN DEL CLIENTE ---
 add_executable(GameClient 
 	src/Client/client.cpp
+	src/Client/globals.h
 	src/Client/InputSystem.h
 	src/Client/InputSystem.cpp
 	src/Client/NetworkSystem.h
