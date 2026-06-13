@@ -2,6 +2,12 @@
 #include <iostream>
 #include <cstring>
 
+struct PlayerInputPacket 
+{
+    bool up;
+    bool down;
+};
+
 int main() {
     if (enet_initialize() != 0) {
         std::cerr << "Error al inicializar ENet en el Servidor.\n";
@@ -30,23 +36,28 @@ int main() {
         while (enet_host_service(server, &event, 10) > 0) {
             switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
+            {
                 std::cout << "[SERVIDOR] ¡Cliente conectado desde "
                     << event.peer->address.host << ":"
                     << event.peer->address.port << "!\n";
                 break;
+            }   
 
             case ENET_EVENT_TYPE_RECEIVE:
+            {
+                PlayerInputPacket* inputPacket = reinterpret_cast<PlayerInputPacket*>(event.packet->data);
                 std::cout << "[SERVIDOR] Mensaje recibido: "
-                    << (char*)event.packet->data << "\n";
+                    << "Up: " << inputPacket->up << ", Down: " << inputPacket->down << "\n";
 
-                // Destruir el paquete tras leerlo
                 enet_packet_destroy(event.packet);
                 break;
-
+            } 
             case ENET_EVENT_TYPE_DISCONNECT:
+            {
                 std::cout << "[SERVIDOR] Cliente desconectado.\n";
                 break;
-
+            }
+                
             default:
                 break;
             }
