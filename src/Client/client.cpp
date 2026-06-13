@@ -5,13 +5,18 @@
 #include "Globals.h"
 #include "EngineContext.h"
 #include "NetworkSystem.h"
+#include "RenderSystem.h"
+#include <SDL3/SDL.h>
 
 // TODO: MOVE WINDOW TO SYSTEM
 
 int main()
 {
-	NetworkSystem* networkSystem = new NetworkSystem();
+    SDL_SetAppMetadata("Example Input Joystick Polling", "1.0", "com.example.input-joystick-polling");
+
 	InputSystem* inputSystem = new InputSystem();
+	NetworkSystem* networkSystem = new NetworkSystem();
+	RenderSystem* renderSystem = new RenderSystem();
 
 	const EngineContext context = { inputSystem };
 
@@ -26,8 +31,11 @@ int main()
 			{
 				std::cout << "[CLIENT] Init.\n";
 
-				inputSystem->Init();
-				networkSystem->Init();
+				if (!inputSystem->Init() || !networkSystem->Init() || !renderSystem->Init())
+				{
+					gameState = GameState::Exit;
+					break;
+				}
 				gameState = GameState::Update;
 				break;
 			}
@@ -41,6 +49,12 @@ int main()
 				}
 
 				gameState = networkSystem->Update(context);
+				if (gameState != GameState::Update)
+				{
+					break;
+				}
+
+				gameState = renderSystem->Update(context);
 				if (gameState != GameState::Update)
 				{
 					break;

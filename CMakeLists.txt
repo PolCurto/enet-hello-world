@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(unofficial-enet CONFIG REQUIRED)
-find_package(raylib CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
 
 # --- CONFIGURACIÓN DEL SERVIDOR ---
 add_executable(GameServer src/Server/server.cpp)
@@ -22,14 +22,17 @@ target_link_libraries(GameServer PRIVATE
 add_executable(GameClient 
 	src/Client/client.cpp
 	src/Client/globals.h
+	src/Client/EngineContext.h
 	src/Client/InputSystem.h
 	src/Client/InputSystem.cpp
 	src/Client/NetworkSystem.h
 	src/Client/NetworkSystem.cpp
+	src/Client/RenderSystem.h
+	src/Client/RenderSystem.cpp
 )
 
 target_link_libraries(GameClient PRIVATE
 	unofficial::enet::enet 
-	raylib
+	SDL3::SDL3
 	winmm wsock32 ws2_32
 )
