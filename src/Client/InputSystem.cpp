@@ -16,12 +16,6 @@ InputSystem::~InputSystem()
 
 bool InputSystem::Init()
 {
-	if (!SDL_Init(SDL_INIT_EVENTS))
-	{
-		std::cerr << "Error al inicializar SDL: " << SDL_GetError() << std::endl;
-		return false;
-	}
-	std::cout << "Input system inicializado" << std::endl;
 	return true;
 }
 
@@ -45,15 +39,49 @@ void InputSystem::PollKeyboard()
 {
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 
-	down = keyboardState[SDL_SCANCODE_DOWN];
-	up = keyboardState[SDL_SCANCODE_UP];
-
-	if (down)
+	if (keyboardState[SDL_SCANCODE_DOWN])
 	{
-		std::cout << "[CLIENTE] Tecla Abajo presionada.\n";
+		if (downKey == KeyState::Idle || downKey == KeyState::Released)
+		{
+			downKey = KeyState::Down;
+		}
+		else
+		{
+			downKey = KeyState::Repeat;
+		}
 	}
-	if (up)
+	else
 	{
-		std::cout << "[CLIENTE] Tecla Arriba presionada.\n";
+		if (downKey == KeyState::Down || downKey == KeyState::Repeat)
+		{
+			downKey = KeyState::Released;
+		}
+		else
+		{
+			downKey = KeyState::Idle;
+		}
+	}
+
+	if (keyboardState[SDL_SCANCODE_UP])
+	{
+		if (upKey == KeyState::Idle || upKey == KeyState::Released)
+		{
+			upKey = KeyState::Down;
+		}
+		else
+		{
+			upKey = KeyState::Repeat;
+		}
+	}
+	else
+	{
+		if (upKey == KeyState::Down || upKey == KeyState::Repeat)
+		{
+			upKey = KeyState::Released;
+		}
+		else
+		{
+			upKey = KeyState::Idle;
+		}
 	}
 }

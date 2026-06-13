@@ -15,12 +15,6 @@ RenderSystem::~RenderSystem()
 
 bool RenderSystem::Init()
 {
-    if (!SDL_Init(SDL_INIT_VIDEO))
-	{
-		std::cerr << "Error al inicializar SDL: " << SDL_GetError() << std::endl;
-		return false;
-	}
-
     if (!SDL_CreateWindowAndRenderer("My Game", 640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return false;

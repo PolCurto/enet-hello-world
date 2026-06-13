@@ -12,6 +12,12 @@
 
 int main()
 {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+    {
+        std::cerr << "Error crítico al inicializar SDL global: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+	
     SDL_SetAppMetadata("Example Input Joystick Polling", "1.0", "com.example.input-joystick-polling");
 
 	InputSystem* inputSystem = new InputSystem();

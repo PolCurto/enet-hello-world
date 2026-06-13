@@ -12,7 +12,13 @@ find_package(unofficial-enet CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
 
 # --- CONFIGURACIÓN DEL SERVIDOR ---
-add_executable(GameServer src/Server/server.cpp)
+add_executable(GameServer 
+	src/Server/server.cpp
+	src/Server/Globals.h
+	src/Server/NetworkSystem.h
+	src/Server/NetworkSystem.cpp
+)
+
 target_link_libraries(GameServer PRIVATE 
 	unofficial::enet::enet
 	winmm wsock32 ws2_32
@@ -21,7 +27,7 @@ target_link_libraries(GameServer PRIVATE
 # --- CONFIGURACIÓN DEL CLIENTE ---
 add_executable(GameClient 
 	src/Client/client.cpp
-	src/Client/globals.h
+	src/Client/Globals.h
 	src/Client/EngineContext.h
 	src/Client/InputSystem.h
 	src/Client/InputSystem.cpp

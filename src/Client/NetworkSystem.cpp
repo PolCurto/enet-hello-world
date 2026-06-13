@@ -17,13 +17,72 @@ NetworkSystem::~NetworkSystem()
 
 bool NetworkSystem::Init()
 {
+    if (!EnetInit())
+    {
+        return false;
+    }
+
+    if (!SetupHost())
+    {
+        return false;
+    }
+
+    if (!SetupPeer())
+    {
+        return false;
+    }
+
+    if (!ConnectToServer())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+GameState NetworkSystem::Update(const EngineContext& engineContext)
+{
+    
+    if (engineContext.inputSystem->upKey == KeyState::Released || engineContext.inputSystem->downKey == KeyState::Released)
+    {
+        PlayerInputPacket inputData;
+        inputData.up = (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->upKey == KeyState::Repeat);
+        inputData.down = (engineContext.inputSystem->downKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Repeat);
+        SendInputData(inputData);
+    }
+
+    if (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Down)
+    {
+        PlayerInputPacket inputData;
+        inputData.up = (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->upKey == KeyState::Repeat);
+        inputData.down = (engineContext.inputSystem->downKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Repeat);
+        SendInputData(inputData);
+    }
+
+    ListenToServer();
+
+    return GameState::Update; 
+}
+
+void NetworkSystem::Exit()
+{
+    enet_peer_disconnect(peer, 0);
+    enet_host_destroy(client);
+}
+
+bool NetworkSystem::EnetInit()
+{
     if (enet_initialize() != 0)
     {
         std::cerr << "Error al inicializar ENet en el Cliente.\n";
         return false;
     }
     atexit(enet_deinitialize);
+    return true;
+}
 
+bool NetworkSystem::SetupHost()
+{
     // Crear el Host del Cliente (nullptr significa que no se abre un puerto para escuchar)
     client = enet_host_create(nullptr, 1, 2, 0, 0);
     if (!client)
@@ -31,7 +90,11 @@ bool NetworkSystem::Init()
         std::cerr << "No se pudo crear el host del cliente.\n";
         return false;
     }
+    return true;
+}
 
+bool NetworkSystem::SetupPeer()
+{
     // Configurar la direcci�n del servidor a donde nos queremos conectar
     ENetAddress address;
     enet_address_set_host(&address, "127.0.0.1"); // Localhost
@@ -44,7 +107,11 @@ bool NetworkSystem::Init()
         std::cerr << "No hay peers disponibles para iniciar la conexi�n.\n";
         return false;
     }
+    return true;
+}
 
+bool NetworkSystem::ConnectToServer()
+{
     ENetEvent event;
     bool connected = false;
 
@@ -67,24 +134,15 @@ bool NetworkSystem::Init()
     return true;
 }
 
-GameState NetworkSystem::Update(const EngineContext& engineContext)
+void NetworkSystem::SendInputData(const PlayerInputPacket& inputData)
 {
-    PlayerInputPacket inputData;
-    inputData.up = engineContext.inputSystem->up;
-    inputData.down = engineContext.inputSystem->down;
+    ENetPacket* packet = enet_packet_create(&inputData, sizeof(inputData), ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(peer, 0, packet);
+    enet_host_flush(client);
+}
 
-    if (inputData.up || inputData.down)
-    {
-        std::cout << "[CLIENTE] Enviando datos de juego: Up=" << inputData.up << ", Down=" << inputData.down << "\n";
-
-        ENetPacket* packet = enet_packet_create(&inputData, sizeof(inputData), ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send(peer, 0, packet);
-
-        enet_host_flush(client);
-        std::cout << "[CLIENTE] Mensaje enviado.\n";
-
-	}
-
+void NetworkSystem::ListenToServer()
+{
     // Listen to the server (Split in methods in the future)
     ENetEvent event;
     while (enet_host_service(client, &event, 0) > 0)
@@ -100,15 +158,5 @@ GameState NetworkSystem::Update(const EngineContext& engineContext)
             break;
         }
     }
-    return GameState::Update;
+    
 }
-
-void NetworkSystem::Exit()
-{
-    // Procesar la desconexi�n
-    enet_peer_disconnect(peer, 0);
-
-    enet_host_destroy(client);
-}
-
-

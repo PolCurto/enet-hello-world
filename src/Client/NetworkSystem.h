@@ -22,6 +22,15 @@ public:
 	void Exit();
 
 private:
+	bool EnetInit();
+	bool SetupHost();
+	bool SetupPeer();
+	bool ConnectToServer();
+
+	void SendInputData(const PlayerInputPacket& inputData);
+	void ListenToServer();
+
+private:
 	ENetPeer* peer = nullptr;
 	ENetHost* client = nullptr;
 };
