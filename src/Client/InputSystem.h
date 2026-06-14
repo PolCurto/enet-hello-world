@@ -19,9 +19,11 @@ public:
 		
 	bool Init();
 	GameState Update(const EngineContext& engineContext);
+	bool HasInputEventHappened() const;
 
 private:
 	void PollKeyboard();
+	void UpdateKeyState(KeyState& keyState, const bool isKeyPressed);
 
 public:
 	KeyState upKey = KeyState::Idle;

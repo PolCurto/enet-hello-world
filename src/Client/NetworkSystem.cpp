@@ -42,23 +42,15 @@ bool NetworkSystem::Init()
 
 GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
+    // TODO: reduce with a input.hasSomeEventHappened() and send input then
+    if (engineContext.inputSystem->HasInputEventHappened())
+    {
+        PlayerInputPacket inputData;
+        inputData.up = (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->upKey == KeyState::Repeat);
+        inputData.down = (engineContext.inputSystem->downKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Repeat);
+        SendInputData(inputData);
+    }
     
-    if (engineContext.inputSystem->upKey == KeyState::Released || engineContext.inputSystem->downKey == KeyState::Released)
-    {
-        PlayerInputPacket inputData;
-        inputData.up = (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->upKey == KeyState::Repeat);
-        inputData.down = (engineContext.inputSystem->downKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Repeat);
-        SendInputData(inputData);
-    }
-
-    if (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Down)
-    {
-        PlayerInputPacket inputData;
-        inputData.up = (engineContext.inputSystem->upKey == KeyState::Down || engineContext.inputSystem->upKey == KeyState::Repeat);
-        inputData.down = (engineContext.inputSystem->downKey == KeyState::Down || engineContext.inputSystem->downKey == KeyState::Repeat);
-        SendInputData(inputData);
-    }
-
     ListenToServer();
 
     return GameState::Update; 

@@ -17,6 +17,15 @@ add_executable(GameServer
 	src/Server/Globals.h
 	src/Server/NetworkSystem.h
 	src/Server/NetworkSystem.cpp
+	src/Server/ECS/Entity.h
+	src/Server/ECS/Components/MovementComponent.h
+	src/Server/ECS/Components/InputComponent.h
+	src/Server/ECS/Components/PositionComponent.h
+	src/Server/ECS/Systems/MovementSystem.h
+	src/Server/ECS/Systems/MovementSystem.cpp
+	src/Server/ECS/ComponentData.h
+	src/Server/Registry.h
+	src/Server/Registry.cpp
 )
 
 target_link_libraries(GameServer PRIVATE 

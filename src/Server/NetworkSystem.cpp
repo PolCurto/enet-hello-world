@@ -13,8 +13,6 @@ NetworkSystem::~NetworkSystem()
 {
 }
 
-
-
 bool NetworkSystem::Init()
 {
     if (enet_initialize() != 0) {

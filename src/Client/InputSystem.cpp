@@ -39,49 +39,28 @@ void InputSystem::PollKeyboard()
 {
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 
-	if (keyboardState[SDL_SCANCODE_DOWN])
-	{
-		if (downKey == KeyState::Idle || downKey == KeyState::Released)
-		{
-			downKey = KeyState::Down;
-		}
-		else
-		{
-			downKey = KeyState::Repeat;
-		}
-	}
-	else
-	{
-		if (downKey == KeyState::Down || downKey == KeyState::Repeat)
-		{
-			downKey = KeyState::Released;
-		}
-		else
-		{
-			downKey = KeyState::Idle;
-		}
-	}
+	UpdateKeyState(upKey, keyboardState[SDL_SCANCODE_UP]);
+	UpdateKeyState(downKey, keyboardState[SDL_SCANCODE_DOWN]);
+}
 
-	if (keyboardState[SDL_SCANCODE_UP])
-	{
-		if (upKey == KeyState::Idle || upKey == KeyState::Released)
-		{
-			upKey = KeyState::Down;
-		}
-		else
-		{
-			upKey = KeyState::Repeat;
-		}
-	}
-	else
-	{
-		if (upKey == KeyState::Down || upKey == KeyState::Repeat)
-		{
-			upKey = KeyState::Released;
-		}
-		else
-		{
-			upKey = KeyState::Idle;
-		}
-	}
+void InputSystem::UpdateKeyState(KeyState& currentKey, const bool isPressed)
+{
+    if (isPressed)
+    {
+        currentKey = (currentKey == KeyState::Idle || currentKey == KeyState::Released) 
+                     ? KeyState::Down 
+                     : KeyState::Repeat;
+    }
+    else
+    {
+        currentKey = (currentKey == KeyState::Down || currentKey == KeyState::Repeat) 
+                     ? KeyState::Released 
+                     : KeyState::Idle;
+    }
+}
+
+bool InputSystem::HasInputEventHappened() const
+{
+	return upKey == KeyState::Down || upKey == KeyState::Released ||
+			downKey == KeyState::Down || downKey == KeyState::Released;
 }
