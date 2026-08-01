@@ -24,8 +24,14 @@ add_executable(GameServer
 	src/Server/ECS/Systems/MovementSystem.h
 	src/Server/ECS/Systems/MovementSystem.cpp
 	src/Server/ECS/ComponentData.h
-	src/Server/Registry.h
-	src/Server/Registry.cpp
+	src/Server/ECS/Registry.h
+	src/Server/ECS/Registry.cpp
+	src/Server/ECS/Systems/InputSystem.h
+	src/Server/ECS/Systems/InputSystem.cpp
+	src/Server/ECS/World.h
+	src/Server/ECS/World.cpp
+	src/Server/EngineContext.h
+	src/Shared/GameState.h
 )
 
 target_link_libraries(GameServer PRIVATE 
@@ -51,3 +57,6 @@ target_link_libraries(GameClient PRIVATE
 	SDL3::SDL3
 	winmm wsock32 ws2_32
 )
+
+target_include_directories(GameClient PRIVATE src/Shared)
+target_include_directories(GameServer PRIVATE src/Shared)

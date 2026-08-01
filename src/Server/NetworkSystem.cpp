@@ -3,7 +3,9 @@
 #include <iostream>
 #include <enet/enet.h>
 
-#include "Globals.h"
+#include "GameState.h"
+#include "PlayerInputPacket.h"
+#include "EngineContext.h"
 
 NetworkSystem::NetworkSystem()
 {
@@ -37,7 +39,7 @@ bool NetworkSystem::Init()
     return true;
 }
 
-GameState NetworkSystem::Update()
+GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
     ENetEvent event;
     bool running = true;

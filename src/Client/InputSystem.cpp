@@ -3,7 +3,7 @@
 #include <iostream>
 #include <SDL3/SDL.h>
 
-#include "Globals.h"
+#include "GameState.h"
 #include "EngineContext.h"
 
 InputSystem::InputSystem()

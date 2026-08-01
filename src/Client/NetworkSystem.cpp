@@ -5,7 +5,9 @@
 
 #include "EngineContext.h"
 #include "InputSystem.h"
-#include "Globals.h"
+#include "GameState.h"
+#include "PlayerInputPacket.h"
+
 
 NetworkSystem::NetworkSystem()
 {
@@ -42,7 +44,6 @@ bool NetworkSystem::Init()
 
 GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
-    // TODO: reduce with a input.hasSomeEventHappened() and send input then
     if (engineContext.inputSystem->HasInputEventHappened())
     {
         PlayerInputPacket inputData;

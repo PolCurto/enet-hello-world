@@ -1,13 +1,18 @@
 #include <iostream>
 
-#include "Globals.h"
+#include "GameState.h"
 #include "NetworkSystem.h"
+#include "ECS/World.h"
+#include "EngineContext.h"
 
 int main() 
 {
     GameState gameState = GameState::Init;   
 
     NetworkSystem* networkSystem = new NetworkSystem();
+    World* world = new World();
+
+    const EngineContext engineContext = { networkSystem, world };
 
     while (gameState != GameState::Exit)
     {
@@ -28,11 +33,18 @@ int main()
 
             case GameState::Update:
             {
-                gameState = networkSystem->Update();
+                gameState = networkSystem->Update(engineContext);
                 if (gameState != GameState::Update)
                 {
                     break;
                 }
+                
+                gameState = world->Update();
+                if (gameState != GameState::Update)
+                {
+                    break;
+                }
+
                 break;
             }
 
@@ -45,5 +57,9 @@ int main()
         }
     }
 
+    delete networkSystem;
+    delete world;
+
+    std::cout << "[SERVER] Closing.\n";
     return 0;
 }

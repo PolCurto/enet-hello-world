@@ -1,12 +1,13 @@
 #include <iostream>
 #include <cstring>
 
+#include <SDL3/SDL.h>
+
 #include "InputSystem.h"
-#include "Globals.h"
+#include "GameState.h"
 #include "EngineContext.h"
 #include "NetworkSystem.h"
 #include "RenderSystem.h"
-#include <SDL3/SDL.h>
 
 // TODO: MOVE WINDOW TO SYSTEM
 
@@ -24,7 +25,7 @@ int main()
 	NetworkSystem* networkSystem = new NetworkSystem();
 	RenderSystem* renderSystem = new RenderSystem();
 
-	const EngineContext context = { inputSystem };
+	const EngineContext context = { inputSystem, networkSystem, renderSystem };
 
 	GameState gameState = GameState::Init;
 
@@ -79,7 +80,8 @@ int main()
 
 	delete networkSystem;
 	delete inputSystem;
+	delete renderSystem;
 
-    std::cout << "[CLIENTE] Cerrando.\n";
+    std::cout << "[CLIENT] Closing.\n";
     return 0;
 }

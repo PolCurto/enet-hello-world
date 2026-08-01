@@ -5,12 +5,6 @@
 enum class GameState;
 struct EngineContext;
 
-struct PlayerInputPacket 
-{
-	bool up;
-	bool down;
-};
-
 class NetworkSystem
 {
 public:
@@ -18,7 +12,7 @@ public:
 	~NetworkSystem();
 
 	bool Init();
-	GameState Update();
+	GameState Update(const EngineContext& engineContext);
 	void Exit();
 
 private:

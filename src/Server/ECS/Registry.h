@@ -1,11 +1,11 @@
 #pragma once
 
 #include <tuple>
-#include "ECS/ComponentData.h"
+#include "ComponentData.h"
 
-#include "ECS/Components/InputComponent.h"
-#include "ECS/Components/PositionComponent.h"
-#include "ECS/Components/MovementComponent.h"
+#include "Components/InputComponent.h"
+#include "Components/PositionComponent.h"
+#include "Components/MovementComponent.h"
 
 class Registry
 {

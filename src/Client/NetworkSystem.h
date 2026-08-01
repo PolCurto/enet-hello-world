@@ -4,12 +4,7 @@
 
 enum class GameState;
 struct EngineContext;
-
-struct PlayerInputPacket 
-{
-	bool up;
-	bool down;
-};
+struct PlayerInputPacket;
 
 class NetworkSystem
 {
