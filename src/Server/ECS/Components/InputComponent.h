@@ -2,4 +2,6 @@
 
 struct InputComponent
 {
+    bool up;
+    bool down;
 };

@@ -14,7 +14,8 @@ public:
     void Init();
     GameState Update();
 
-    void AddPlayer();
+    int OnPlayerConnected();
+    void OnPlayerInput(int entityId, bool up, bool down);
 
 private:
     std::unique_ptr<Registry> registry;

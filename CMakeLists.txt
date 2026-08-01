@@ -14,7 +14,6 @@ find_package(SDL3 CONFIG REQUIRED)
 # --- CONFIGURACIÓN DEL SERVIDOR ---
 add_executable(GameServer 
 	src/Server/server.cpp
-	src/Server/Globals.h
 	src/Server/NetworkSystem.h
 	src/Server/NetworkSystem.cpp
 	src/Server/ECS/Entity.h
@@ -42,7 +41,6 @@ target_link_libraries(GameServer PRIVATE
 # --- CONFIGURACIÓN DEL CLIENTE ---
 add_executable(GameClient 
 	src/Client/client.cpp
-	src/Client/Globals.h
 	src/Client/EngineContext.h
 	src/Client/InputSystem.h
 	src/Client/InputSystem.cpp

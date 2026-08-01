@@ -13,7 +13,7 @@ public:
     Registry();
     ~Registry();
 
-    void AddEntity();
+    int AddEntity();
     void RemoveEntity(int entityId);
 
     template <typename T>
@@ -26,4 +26,6 @@ private:
     std::tuple<ComponentData<InputComponent>, 
                ComponentData<PositionComponent>, 
                ComponentData<MovementComponent>> components;
+
+    int nextEntityId = 0;
 };

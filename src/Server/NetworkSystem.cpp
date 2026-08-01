@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "PlayerInputPacket.h"
 #include "EngineContext.h"
+#include "ECS/World.h"
 
 NetworkSystem::NetworkSystem()
 {
@@ -55,14 +56,16 @@ GameState NetworkSystem::Update(const EngineContext& engineContext)
                     std::cout << "[SERVIDOR] ¡Cliente conectado desde "
                         << event.peer->address.host << ":"
                         << event.peer->address.port << "!\n";
+
+                    const int entityId = engineContext.world->OnPlayerConnected();
+                    event.peer->data = (void*)(uintptr_t)entityId;
                     break;
                 }   
 
                 case ENET_EVENT_TYPE_RECEIVE:
                 {
                     PlayerInputPacket* inputPacket = reinterpret_cast<PlayerInputPacket*>(event.packet->data);
-                    std::cout << "[SERVIDOR] Mensaje recibido: "
-                        << "Up: " << inputPacket->up << ", Down: " << inputPacket->down << "\n";
+                    engineContext.world->OnPlayerInput((int)(uintptr_t)event.peer->data, inputPacket->up, inputPacket->down);
 
                     enet_packet_destroy(event.packet);
                     break;

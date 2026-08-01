@@ -10,12 +10,12 @@ Registry::~Registry()
 
 }
 
-void Registry::AddEntity()
+int Registry::AddEntity()
 {
-    // Implementación para agregar una entidad
+    return 0;
 }
 
 void Registry::RemoveEntity(int entityId)
 {
-    // Implementación para eliminar una entidad
+  
 }
