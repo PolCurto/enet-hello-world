@@ -11,6 +11,6 @@ public:
     MovementSystem() = default;
     ~MovementSystem() = default;
 
-    void UpdateComponents(const std::vector<MovementComponent>& movementComponents,
-                          const std::vector<PositionComponent>& positionComponents);
+    void UpdateComponents(const std::vector<MovementComponent*>& movementComponents,
+                          std::vector<PositionComponent*>& positionComponents);
 };

@@ -12,27 +12,30 @@ find_package(unofficial-enet CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
 
 # --- CONFIGURACIÓN DEL SERVIDOR ---
-add_executable(GameServer 
-	src/Server/server.cpp
-	src/Server/NetworkSystem.h
-	src/Server/NetworkSystem.cpp
-	src/Server/ECS/Entity.h
-	src/Server/ECS/Components/MovementComponent.h
-	src/Server/ECS/Components/InputComponent.h
-	src/Server/ECS/Components/PositionComponent.h
-	src/Server/ECS/Systems/MovementSystem.h
-	src/Server/ECS/Systems/MovementSystem.cpp
-	src/Server/ECS/ComponentData.h
-	src/Server/ECS/Registry.h
-	src/Server/ECS/Registry.cpp
-	src/Server/ECS/Systems/InputSystem.h
-	src/Server/ECS/Systems/InputSystem.cpp
-	src/Server/ECS/World.h
-	src/Server/ECS/World.cpp
-	src/Server/EngineContext.h
-	src/Shared/GameState.h
-)
+add_executable(GameServer src/Server/server.cpp)
 
+target_sources(GameServer PRIVATE
+    # C++ Sources
+    src/Server/NetworkSystem.cpp
+    src/Server/ECS/Registry.cpp
+    src/Server/ECS/World.cpp
+    src/Server/ECS/Systems/InputSystem.cpp
+    src/Server/ECS/Systems/MovementSystem.cpp
+
+    # Headers (Opcional, para Visual Studio Solution Explorer)
+    src/Server/NetworkSystem.h
+    src/Server/EngineContext.h
+    src/Server/ECS/Entity.h
+    src/Server/ECS/ComponentData.h
+    src/Server/ECS/Registry.h
+    src/Server/ECS/World.h
+    src/Server/ECS/Components/MovementComponent.h
+    src/Server/ECS/Components/InputComponent.h
+    src/Server/ECS/Components/PositionComponent.h
+    src/Server/ECS/Systems/InputSystem.h
+    src/Server/ECS/Systems/MovementSystem.h
+    src/Shared/GameState.h
+)
 target_link_libraries(GameServer PRIVATE 
 	unofficial::enet::enet
 	winmm wsock32 ws2_32

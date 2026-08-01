@@ -12,7 +12,14 @@ Registry::~Registry()
 
 int Registry::AddEntity()
 {
-    return 0;
+   int entityId = nextEntityId++;
+
+    ForEachPool([entityId](auto& pool) 
+    {
+        pool.sparse.push_back(-1);
+    });
+
+    return entityId;
 }
 
 void Registry::RemoveEntity(int entityId)

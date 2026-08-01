@@ -27,6 +27,8 @@ int main()
                     gameState = GameState::Exit;
                     break;
                 }
+                world->Init();
+
                 gameState = GameState::Update;
                 break;
             }
@@ -50,7 +52,7 @@ int main()
 
             case GameState::Exit:
             {
-                std::cout << "[SERVIDOR] Exit.\n";
+                std::cout << "[SERVER] Exit.\n";
                 networkSystem->Exit();
                 break;
             }

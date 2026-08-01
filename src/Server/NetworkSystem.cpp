@@ -43,44 +43,41 @@ bool NetworkSystem::Init()
 GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
     ENetEvent event;
-    bool running = true;
 
-    while (running) {
-        // Enet_host_service espera eventos de red (en este caso, timeout de 10ms)
-        while (enet_host_service(server, &event, 10) > 0) 
+    while (enet_host_service(server, &event, 0) > 0) 
+    {
+        switch (event.type) 
         {
-            switch (event.type) 
+            case ENET_EVENT_TYPE_CONNECT:
             {
-                case ENET_EVENT_TYPE_CONNECT:
-                {
-                    std::cout << "[SERVIDOR] ¡Cliente conectado desde "
-                        << event.peer->address.host << ":"
-                        << event.peer->address.port << "!\n";
+                std::cout << "[SERVIDOR] ¡Cliente conectado desde "
+                    << event.peer->address.host << ":"
+                    << event.peer->address.port << "!\n";
 
-                    const int entityId = engineContext.world->OnPlayerConnected();
-                    event.peer->data = (void*)(uintptr_t)entityId;
-                    break;
-                }   
+                const int entityId = engineContext.world->OnPlayerConnected();
+                event.peer->data = (void*)(uintptr_t)entityId;
+                break;
+            }   
 
-                case ENET_EVENT_TYPE_RECEIVE:
-                {
-                    PlayerInputPacket* inputPacket = reinterpret_cast<PlayerInputPacket*>(event.packet->data);
-                    engineContext.world->OnPlayerInput((int)(uintptr_t)event.peer->data, inputPacket->up, inputPacket->down);
+            case ENET_EVENT_TYPE_RECEIVE:
+            {
+                PlayerInputPacket* inputPacket = reinterpret_cast<PlayerInputPacket*>(event.packet->data);
+                engineContext.world->OnPlayerInput((int)(uintptr_t)event.peer->data, inputPacket->up, inputPacket->down);
 
-                    enet_packet_destroy(event.packet);
-                    break;
-                } 
-                case ENET_EVENT_TYPE_DISCONNECT:
-                {
-                    std::cout << "[SERVIDOR] Cliente desconectado.\n";
-                    break;
-                }
-                
-                default:
-                    break;
+                enet_packet_destroy(event.packet);
+                break;
+            } 
+            case ENET_EVENT_TYPE_DISCONNECT:
+            {
+                std::cout << "[SERVIDOR] Cliente desconectado.\n";
+                break;
             }
+            
+            default:
+                break;
         }
     }
+    
     return GameState::Update;
 }
 
