@@ -1,13 +1,7 @@
 #include "Registry.h"
 
-Registry::Registry()
-{
-
-}
-
 Registry::~Registry()
 {
-
 }
 
 int Registry::AddEntity()

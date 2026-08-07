@@ -7,6 +7,7 @@
 #include "PlayerInputPacket.h"
 #include "EngineContext.h"
 #include "ECS/World.h"
+#include "WorldStatePacket.h"
 
 NetworkSystem::NetworkSystem()
 {
@@ -43,6 +44,8 @@ bool NetworkSystem::Init()
 GameState NetworkSystem::Update(const EngineContext& engineContext)
 {
     ENetEvent event;
+
+    BroadcastWorldState(engineContext);
 
     while (enet_host_service(server, &event, 0) > 0) 
     {
@@ -84,4 +87,15 @@ GameState NetworkSystem::Update(const EngineContext& engineContext)
 void NetworkSystem::Exit()
 {
     enet_host_destroy(server);
+}
+
+void NetworkSystem::BroadcastWorldState(const EngineContext& engineContext)
+{
+    const WorldStatePacket& worldState = engineContext.world->GetWorldState();
+
+    std::cout << "[SERVIDOR] Enviando WorldStatePacket con " << worldState.count << " entidades.\n";
+
+    ENetPacket* packet = enet_packet_create(&worldState, sizeof(WorldStatePacket), ENET_PACKET_FLAG_RELIABLE);
+
+    enet_host_broadcast(server, 0, packet);
 }

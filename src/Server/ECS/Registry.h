@@ -10,7 +10,14 @@
 class Registry
 {
 public:
-    Registry();
+    Registry() : components(std::make_tuple(
+            ComponentData<InputComponent>{},
+            ComponentData<PositionComponent>{},
+            ComponentData<MovementComponent>{}
+        )),
+        nextEntityId(0)
+    {
+    }
     ~Registry();
 
     int AddEntity();
@@ -42,6 +49,12 @@ public:
         
         const int componentIdx = data.sparse[entityId];
         return data.components[componentIdx];
+    }
+
+    template <typename T>
+    const ComponentData<T>& GetComponentData()
+    {
+        return std::get<ComponentData<T>>(components);
     }
 
     template <typename T, typename U>

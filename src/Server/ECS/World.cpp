@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/PositionComponent.h"
+#include "WorldStatePacket.h"
 
 #include <iostream>
 
@@ -56,9 +57,26 @@ int World::OnPlayerConnected()
 
 void World::OnPlayerInput(int entityId, bool up, bool down)
 {
-    std::cout << "ON PLAYER " << entityId << " INPUT: " << up << ", " << down << "\n";
+    //std::cout << "ON PLAYER " << entityId << " INPUT: " << up << ", " << down << "\n";
 
     InputComponent& input = registry->GetComponent<InputComponent>(entityId);
     input.up = up;
     input.down = down;
+}
+
+const WorldStatePacket& World::GetWorldState() const
+{
+    WorldStatePacket packet;
+
+    const ComponentData<PositionComponent>& positionData = registry->GetComponentData<PositionComponent>();
+    packet.count = positionData.dense.size();
+
+    for (int i = 0; i < positionData.dense.size(); ++i)
+    {
+        const int entityId = positionData.dense[i];
+        const float x = positionData.components[i].x;
+        const float y = positionData.components[i].y;
+        packet.entities[i] = { entityId, x, y };
+    }
+    return packet;
 }

@@ -15,6 +15,8 @@ public:
 	GameState Update(const EngineContext& engineContext);
 	void Exit();
 
+	void BroadcastWorldState(const EngineContext& engineContext);
+
 private:
 	ENetHost* server = nullptr;
 };

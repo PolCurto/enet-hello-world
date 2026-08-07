@@ -18,7 +18,5 @@ void MovementSystem::UpdateComponents(const std::vector<MovementComponent*>& mov
 
         position.x += movement.speedX;
         position.y += movement.speedY;
-
-        std::cout << "POSITION: " << position.x << ", " << position.y << "\n";
     }
 }

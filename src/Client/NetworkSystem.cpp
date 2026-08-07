@@ -7,6 +7,7 @@
 #include "InputSystem.h"
 #include "GameState.h"
 #include "PlayerInputPacket.h"
+#include "WorldStatePacket.h"
 
 
 NetworkSystem::NetworkSystem()
@@ -142,10 +143,14 @@ void NetworkSystem::ListenToServer()
     {
         switch (event.type) {
         case ENET_EVENT_TYPE_RECEIVE:
-            // Aquí el servidor nos devuelve la nueva posición
-            std::cout << "[CLIENTE] Datos de juego recibidos.\n";
+        {
+            const WorldStatePacket* worldStatePacket = reinterpret_cast<const WorldStatePacket*>(event.packet->data);
+            std::cout << "[CLIENTE] Recibido WorldStatePacket con " << worldStatePacket->count << " entidades.\n";
+
             enet_packet_destroy(event.packet);
             break;
+        }
+            
         case ENET_EVENT_TYPE_DISCONNECT:
             std::cout << "[CLIENTE] Desconectado.\n";
             break;

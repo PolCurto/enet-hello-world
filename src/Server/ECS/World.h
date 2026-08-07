@@ -11,6 +11,7 @@ enum class GameState;
 struct InputComponent;
 struct MovementComponent;
 struct PositionComponent;
+struct WorldStatePacket;
 
 class World
 {
@@ -23,6 +24,8 @@ public:
 
     int OnPlayerConnected();
     void OnPlayerInput(int entityId, bool up, bool down);
+
+    const WorldStatePacket& GetWorldState() const;
 
 private:
     std::unique_ptr<Registry> registry;
