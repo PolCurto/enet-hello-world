@@ -29,7 +29,7 @@ void World::Init()
 {
 }
 
-GameState World::Update()
+GameState World::Update(const float deltaTime)
 {
     tempInputComponents.clear();
     tempMovementComponents.clear();
@@ -39,7 +39,7 @@ GameState World::Update()
     tempMovementComponents.clear();
     tempPositionComponents.clear();
     registry->GetComponentsUnion(tempMovementComponents, tempPositionComponents);
-    movementSystem->UpdateComponents(tempMovementComponents, tempPositionComponents);
+    movementSystem->UpdateComponents(tempMovementComponents, tempPositionComponents, deltaTime);
 
     return GameState::Update;
 }

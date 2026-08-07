@@ -21,7 +21,7 @@ public:
     ~World();
 
     void Init();
-    GameState Update();
+    GameState Update(const float deltaTime);
 
     int OnPlayerConnected();
     void OnPlayerInput(int entityId, bool up, bool down);

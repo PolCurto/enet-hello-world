@@ -29,7 +29,35 @@ GameState RenderSystem::Update(const EngineContext& engineContext)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    SDL_RenderRect(renderer, nullptr);
+
+    RenderObjectsToScreen();
+
     SDL_RenderPresent(renderer);
 
     return GameState::Update;
+}
+
+void RenderSystem::RenderObjectsToScreen()
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
+    for (const SDL_FRect& rect : renderObjects)
+    {
+        SDL_RenderFillRect(renderer, &rect);
+    }
+}
+
+void RenderSystem::FillRenderObjects(const std::vector<float>& values)
+{
+    renderObjects.clear();
+    for (int i = 0; i < values.size(); i = i + 4)
+    {
+        SDL_FRect rect;
+        rect.x = values[i];
+        rect.y = values[i + 1];
+        rect.w = values[i + 2];
+        rect.h = values[i + 3];
+        renderObjects.push_back(rect);
+    }
 }

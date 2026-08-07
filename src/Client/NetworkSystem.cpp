@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "PlayerInputPacket.h"
 #include "WorldStatePacket.h"
+#include "RenderSystem.h"
 
 
 NetworkSystem::NetworkSystem()
@@ -53,7 +54,7 @@ GameState NetworkSystem::Update(const EngineContext& engineContext)
         SendInputData(inputData);
     }
     
-    ListenToServer();
+    ListenToServer(engineContext);
 
     return GameState::Update; 
 }
@@ -135,7 +136,7 @@ void NetworkSystem::SendInputData(const PlayerInputPacket& inputData)
     enet_host_flush(client);
 }
 
-void NetworkSystem::ListenToServer()
+void NetworkSystem::ListenToServer(const EngineContext& engineContext)
 {
     // Listen to the server (Split in methods in the future)
     ENetEvent event;
@@ -147,6 +148,8 @@ void NetworkSystem::ListenToServer()
             const WorldStatePacket* worldStatePacket = reinterpret_cast<const WorldStatePacket*>(event.packet->data);
             std::cout << "[CLIENTE] Recibido WorldStatePacket con " << worldStatePacket->count << " entidades.\n";
 
+            SendWorldStateToRender(*worldStatePacket, engineContext);
+
             enet_packet_destroy(event.packet);
             break;
         }
@@ -156,5 +159,20 @@ void NetworkSystem::ListenToServer()
             break;
         }
     }
-    
+}
+
+void NetworkSystem::SendWorldStateToRender(const WorldStatePacket& worldStatePacket, const EngineContext& engineContext)
+{
+    std::vector<float> renderValues;
+
+    for (int i = 0; i < worldStatePacket.count; ++i)
+    {
+        const EntityState& entity = worldStatePacket.entities[i];
+        renderValues.push_back(entity.x);
+        renderValues.push_back(entity.y);
+        renderValues.push_back(20.0f);
+        renderValues.push_back(50.0f);
+    }
+
+    engineContext.renderSystem->FillRenderObjects(renderValues);
 }

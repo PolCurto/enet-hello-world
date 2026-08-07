@@ -12,5 +12,6 @@ public:
     ~MovementSystem() = default;
 
     void UpdateComponents(const std::vector<MovementComponent*>& movementComponents,
-                          std::vector<PositionComponent*>& positionComponents);
+                          std::vector<PositionComponent*>& positionComponents,
+                          const float deltaTime);
 };

@@ -1,13 +1,16 @@
 #include <iostream>
+#include <chrono>
 
 #include "GameState.h"
 #include "NetworkSystem.h"
 #include "ECS/World.h"
 #include "EngineContext.h"
+#include "Clock.h"
 
 int main() 
 {
     GameState gameState = GameState::Init;   
+    Clock clock;
 
     NetworkSystem* networkSystem = new NetworkSystem();
     World* world = new World();
@@ -35,13 +38,15 @@ int main()
 
             case GameState::Update:
             {
+                const float deltaTime = clock.Restart();
+
                 gameState = networkSystem->Update(engineContext);
                 if (gameState != GameState::Update)
                 {
                     break;
                 }
                 
-                gameState = world->Update();
+                gameState = world->Update(deltaTime);
                 if (gameState != GameState::Update)
                 {
                     break;

@@ -3,8 +3,10 @@
 #include <enet/enet.h>
 
 enum class GameState;
+
 struct EngineContext;
 struct PlayerInputPacket;
+struct WorldStatePacket;
 
 class NetworkSystem
 {
@@ -23,7 +25,9 @@ private:
 	bool ConnectToServer();
 
 	void SendInputData(const PlayerInputPacket& inputData);
-	void ListenToServer();
+	void ListenToServer(const EngineContext& engineContext);
+
+	void SendWorldStateToRender(const WorldStatePacket& worldStatePacket, const EngineContext& engineContext);
 
 private:
 	ENetPeer* peer = nullptr;
