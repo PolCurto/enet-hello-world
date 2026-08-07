@@ -4,7 +4,7 @@
 #include "ComponentData.h"
 
 #include "Components/InputComponent.h"
-#include "Components/PositionComponent.h"
+#include "Components/TransformComponent.h"
 #include "Components/MovementComponent.h"
 
 class Registry
@@ -12,7 +12,7 @@ class Registry
 public:
     Registry() : components(std::make_tuple(
             ComponentData<InputComponent>{},
-            ComponentData<PositionComponent>{},
+            ComponentData<TransformComponent>{},
             ComponentData<MovementComponent>{}
         )),
         nextEntityId(0)
@@ -86,7 +86,7 @@ private:
 
 private:
     std::tuple<ComponentData<InputComponent>, 
-               ComponentData<PositionComponent>, 
+               ComponentData<TransformComponent>, 
                ComponentData<MovementComponent>> components;
 
     int nextEntityId = 0;

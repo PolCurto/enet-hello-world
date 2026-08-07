@@ -3,7 +3,7 @@
 #include <vector>
 
 struct MovementComponent;
-struct PositionComponent;
+struct TransformComponent;
 
 class MovementSystem
 {
@@ -12,6 +12,6 @@ public:
     ~MovementSystem() = default;
 
     void UpdateComponents(const std::vector<MovementComponent*>& movementComponents,
-                          std::vector<PositionComponent*>& positionComponents,
+                          std::vector<TransformComponent*>& transformComponents,
                           const float deltaTime);
 };

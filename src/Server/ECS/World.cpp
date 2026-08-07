@@ -6,7 +6,7 @@
 #include "Systems/MovementSystem.h"
 #include "Components/InputComponent.h"
 #include "Components/MovementComponent.h"
-#include "Components/PositionComponent.h"
+#include "Components/TransformComponent.h"
 #include "WorldStatePacket.h"
 
 #include <iostream>
@@ -37,9 +37,9 @@ GameState World::Update(const float deltaTime)
     inputSystem->UpdateComponents(tempInputComponents, tempMovementComponents);
 
     tempMovementComponents.clear();
-    tempPositionComponents.clear();
-    registry->GetComponentsUnion(tempMovementComponents, tempPositionComponents);
-    movementSystem->UpdateComponents(tempMovementComponents, tempPositionComponents, deltaTime);
+    tempTransformComponents.clear();
+    registry->GetComponentsUnion(tempMovementComponents, tempTransformComponents);
+    movementSystem->UpdateComponents(tempMovementComponents, tempTransformComponents, deltaTime);
 
     return GameState::Update;
 }
@@ -49,7 +49,7 @@ int World::OnPlayerConnected()
     const int entityId = registry->AddEntity();
 
     registry->AddComponent(entityId, InputComponent{ false, false });
-    registry->AddComponent(entityId, PositionComponent{ 0.0f, 0.0f });
+    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 20.0f, 100.0f });
     registry->AddComponent(entityId, MovementComponent{ 0.0f, 0.0f });
 
     return entityId;
@@ -66,14 +66,14 @@ void World::OnPlayerInput(int entityId, bool up, bool down)
 
 const WorldStatePacket& World::GetWorldState()
 {
-    const ComponentData<PositionComponent>& positionData = registry->GetComponentData<PositionComponent>();
-    currentWorldState.count = positionData.dense.size();
+    const ComponentData<TransformComponent>& transformData = registry->GetComponentData<TransformComponent>();
+    currentWorldState.count = transformData.dense.size();
 
-    for (int i = 0; i < positionData.dense.size(); ++i)
+    for (int i = 0; i < transformData.dense.size(); ++i)
     {
-        const int entityId = positionData.dense[i];
-        const float x = positionData.components[i].x;
-        const float y = positionData.components[i].y;
+        const int entityId = transformData.dense[i];
+        const float x = transformData.components[i].x;
+        const float y = transformData.components[i].y;
         currentWorldState.entities[i] = { entityId, x, y };
     }
     return currentWorldState;

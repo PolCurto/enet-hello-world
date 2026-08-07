@@ -31,7 +31,7 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/World.h
     src/Server/ECS/Components/MovementComponent.h
     src/Server/ECS/Components/InputComponent.h
-    src/Server/ECS/Components/PositionComponent.h
+    src/Server/ECS/Components/TransformComponent.h
     src/Server/ECS/Systems/InputSystem.h
     src/Server/ECS/Systems/MovementSystem.h
     src/Shared/GameState.h

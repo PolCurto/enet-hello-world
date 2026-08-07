@@ -12,7 +12,7 @@ enum class GameState;
 
 struct InputComponent;
 struct MovementComponent;
-struct PositionComponent;
+struct TransformComponent;
 
 class World
 {
@@ -36,7 +36,7 @@ private:
 
     std::vector<InputComponent*> tempInputComponents;
     std::vector<MovementComponent*> tempMovementComponents;
-    std::vector<PositionComponent*> tempPositionComponents;
+    std::vector<TransformComponent*> tempTransformComponents;
 
     WorldStatePacket currentWorldState;
 };

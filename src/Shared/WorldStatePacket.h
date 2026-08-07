@@ -2,7 +2,7 @@
 
 #include <vector>
 
-struct PositionComponent;
+struct TransformComponent;
 
 struct EntityState
 {
