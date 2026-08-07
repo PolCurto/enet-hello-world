@@ -1,5 +1,5 @@
 #include <iostream>
-#include <chrono>
+#include <thread>
 
 #include "GameState.h"
 #include "NetworkSystem.h"
@@ -62,6 +62,8 @@ int main()
                 break;
             }
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Sleep for ~16ms to limit the update rate
     }
 
     delete networkSystem;

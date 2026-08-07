@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/CollisionSystem.h"
 #include "Components/InputComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/TransformComponent.h"
@@ -16,6 +17,7 @@ World::World()
     registry = std::make_unique<Registry>();
     inputSystem = std::make_unique<InputSystem>();
     movementSystem = std::make_unique<MovementSystem>();
+    collisionSystem = std::make_unique<CollisionSystem>();
 }
 
 World::~World()
@@ -23,23 +25,28 @@ World::~World()
     registry.reset();
     inputSystem.reset();
     movementSystem.reset();
+    collisionSystem.reset();
 }
 
 void World::Init()
 {
+    const int entityId = registry->AddEntity();
+
+    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 15.0f, 15.0f });
+    registry->AddComponent(entityId, MovementComponent { 400.0f, 200.0f });
+    registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce });
 }
 
 GameState World::Update(const float deltaTime)
 {
-    tempInputComponents.clear();
-    tempMovementComponents.clear();
     registry->GetComponentsUnion(tempInputComponents, tempMovementComponents);
     inputSystem->UpdateComponents(tempInputComponents, tempMovementComponents);
 
-    tempMovementComponents.clear();
-    tempTransformComponents.clear();
     registry->GetComponentsUnion(tempMovementComponents, tempTransformComponents);
     movementSystem->UpdateComponents(tempMovementComponents, tempTransformComponents, deltaTime);
+
+    registry->GetComponentsUnion(tempTransformComponents, tempMovementComponents, tempCollisionComponents);
+    collisionSystem->UpdateComponents(tempTransformComponents, tempMovementComponents, tempCollisionComponents);
 
     return GameState::Update;
 }
@@ -48,9 +55,19 @@ int World::OnPlayerConnected()
 {
     const int entityId = registry->AddEntity();
 
-    registry->AddComponent(entityId, InputComponent{ false, false });
-    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 20.0f, 100.0f });
-    registry->AddComponent(entityId, MovementComponent{ 0.0f, 0.0f });
+    registry->AddComponent(entityId, InputComponent { false, false });
+
+    if (!playerConnected)
+    {
+        registry->AddComponent(entityId, TransformComponent { 0.0f, 100.0f, 20.0f, 100.0f });       
+        playerConnected = true;
+    }
+    else
+    {
+        registry->AddComponent(entityId, TransformComponent { 300.0f, 100.0f, 20.0f, 100.0f });
+    }
+    registry->AddComponent(entityId, MovementComponent { 0.0f, 0.0f });
+    registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Static });
 
     return entityId;
 }
@@ -74,7 +91,9 @@ const WorldStatePacket& World::GetWorldState()
         const int entityId = transformData.dense[i];
         const float x = transformData.components[i].x;
         const float y = transformData.components[i].y;
-        currentWorldState.entities[i] = { entityId, x, y };
+        const float w = transformData.components[i].w;
+        const float h = transformData.components[i].h;
+        currentWorldState.entities[i] = { entityId, x, y, w, h };
     }
     return currentWorldState;
 }

@@ -5,6 +5,8 @@
 #include "../Components/InputComponent.h"
 #include "../Components/MovementComponent.h"
 
+constexpr float MOVEMENT_SPEED = 400.0f;
+
 void InputSystem::UpdateComponents(const std::vector<InputComponent*>& inputComponents, 
                                    std::vector<MovementComponent*>& movementComponents)
 {
@@ -18,11 +20,11 @@ void InputSystem::UpdateComponents(const std::vector<InputComponent*>& inputComp
 
         if (input.up)
         {
-            movement.speedY -= 1.0f;
+            movement.speedY -= MOVEMENT_SPEED;
         }   
         if (input.down)
         {
-            movement.speedY += 1.0f;
+            movement.speedY += MOVEMENT_SPEED;
         }
     }
 }

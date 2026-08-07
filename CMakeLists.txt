@@ -21,8 +21,8 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/World.cpp
     src/Server/ECS/Systems/InputSystem.cpp
     src/Server/ECS/Systems/MovementSystem.cpp
+    src/Server/ECS/Systems/CollisionSystem.cpp
 
-    # Headers (Opcional, para Visual Studio Solution Explorer)
     src/Server/NetworkSystem.h
     src/Server/EngineContext.h
     src/Server/ECS/Entity.h
@@ -32,8 +32,10 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/Components/MovementComponent.h
     src/Server/ECS/Components/InputComponent.h
     src/Server/ECS/Components/TransformComponent.h
+    src/Server/ECS/Components/CollisionComponent.h
     src/Server/ECS/Systems/InputSystem.h
     src/Server/ECS/Systems/MovementSystem.h
+    src/Server/ECS/Systems/CollisionSystem.h
     src/Shared/GameState.h
 )
 target_link_libraries(GameServer PRIVATE 

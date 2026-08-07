@@ -9,6 +9,8 @@ struct EntityState
     int entityId;
     float x;
     float y;
+    float w;
+    float h;
 };
 
 constexpr size_t MAX_ENTITIES = 32;

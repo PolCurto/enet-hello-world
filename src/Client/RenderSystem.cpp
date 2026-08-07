@@ -15,7 +15,7 @@ RenderSystem::~RenderSystem()
 
 bool RenderSystem::Init()
 {
-    if (!SDL_CreateWindowAndRenderer("My Game", 640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+    if (!SDL_CreateWindowAndRenderer("My Game", 800, 600, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return false;
     }

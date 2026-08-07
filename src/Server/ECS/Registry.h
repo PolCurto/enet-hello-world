@@ -6,6 +6,7 @@
 #include "Components/InputComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/MovementComponent.h"
+#include "Components/CollisionComponent.h"
 
 class Registry
 {
@@ -13,7 +14,8 @@ public:
     Registry() : components(std::make_tuple(
             ComponentData<InputComponent>{},
             ComponentData<TransformComponent>{},
-            ComponentData<MovementComponent>{}
+            ComponentData<MovementComponent>{},
+            ComponentData<CollisionComponent>{}
         )),
         nextEntityId(0)
     {
@@ -57,20 +59,35 @@ public:
         return std::get<ComponentData<T>>(components);
     }
 
-    template <typename T, typename U>
-    void GetComponentsUnion(std::vector<T*>& outComponentsT, std::vector<U*>& outComponentsU)
+    template <typename... Comps>
+    void GetComponentsUnion(std::vector<Comps*>&... outComponents)
     {
-        ComponentData<T>& dataT = std::get<ComponentData<T>>(components);
-        ComponentData<U>& dataU = std::get<ComponentData<U>>(components);
-
-        const std::vector<int>& smallDense = (dataT.dense.size() < dataU.dense.size()) ? dataT.dense : dataU.dense;
-
-        for (int entityId : smallDense)
+        (outComponents.clear(), ...);
+        if (((std::get<ComponentData<Comps>>(components).dense.empty()) || ...)) 
         {
-            if (HasComponent<T>(entityId) && HasComponent<U>(entityId))
+            return;
+        }
+
+        const std::vector<int>* smallestDense = nullptr;
+        size_t minSize = std::numeric_limits<size_t>::max();
+
+        auto findSmallest = [&](const auto& componentData) {
+            if (componentData.dense.size() < minSize) {
+                minSize = componentData.dense.size();
+                smallestDense = &componentData.dense;
+            }
+        };
+
+        (findSmallest(std::get<ComponentData<Comps>>(components)), ...);
+
+        if (!smallestDense) return;
+
+        for (int entityId : *smallestDense)
+        {
+            bool hasAll = (HasComponent<Comps>(entityId) && ...);
+            if (hasAll)
             {
-                outComponentsT.push_back(&GetComponent<T>(entityId));
-                outComponentsU.push_back(&GetComponent<U>(entityId));
+                (outComponents.push_back(&GetComponent<Comps>(entityId)), ...);
             }
         }
     }
@@ -85,9 +102,12 @@ private:
         }
 
 private:
-    std::tuple<ComponentData<InputComponent>, 
-               ComponentData<TransformComponent>, 
-               ComponentData<MovementComponent>> components;
+    std::tuple<
+        ComponentData<InputComponent>, 
+        ComponentData<TransformComponent>, 
+        ComponentData<MovementComponent>,
+        ComponentData<CollisionComponent>
+    > components;
 
     int nextEntityId = 0;
 };

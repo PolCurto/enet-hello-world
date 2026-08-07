@@ -169,8 +169,8 @@ void NetworkSystem::SendWorldStateToRender(const WorldStatePacket& worldStatePac
         const EntityState& entity = worldStatePacket.entities[i];
         renderValues.push_back(entity.x);
         renderValues.push_back(entity.y);
-        renderValues.push_back(20.0f);
-        renderValues.push_back(50.0f);
+        renderValues.push_back(entity.w);
+        renderValues.push_back(entity.h);
     }
 
     engineContext.renderSystem->FillRenderObjects(renderValues);

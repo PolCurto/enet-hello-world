@@ -9,7 +9,7 @@ public:
     float Restart()
     {
         auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float, std::milli> elapsed = currentTime - lastTime;
+        std::chrono::duration<float> elapsed = currentTime - lastTime;
         lastTime = currentTime;
 
         float dt = elapsed.count();

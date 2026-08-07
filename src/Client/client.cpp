@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <thread>
 
 #include <SDL3/SDL.h>
 
@@ -31,7 +32,6 @@ int main()
 
 	while (gameState != GameState::Exit)
 	{
-
 		switch (gameState)
 		{
 			case GameState::Init:
@@ -76,6 +76,8 @@ int main()
 				break;
 			}
 		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Avoid busy waiting, sleep for a short duration to yield CPU time
 	}
 
 	delete networkSystem;

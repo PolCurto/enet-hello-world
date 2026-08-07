@@ -8,11 +8,14 @@
 class Registry;
 class InputSystem;
 class MovementSystem;
+class CollisionSystem;
+
 enum class GameState;
 
 struct InputComponent;
 struct MovementComponent;
 struct TransformComponent;
+struct CollisionComponent;
 
 class World
 {
@@ -33,10 +36,14 @@ private:
 
     std::unique_ptr<InputSystem> inputSystem;
     std::unique_ptr<MovementSystem> movementSystem;
+    std::unique_ptr<CollisionSystem> collisionSystem;
 
     std::vector<InputComponent*> tempInputComponents;
     std::vector<MovementComponent*> tempMovementComponents;
     std::vector<TransformComponent*> tempTransformComponents;
+    std::vector<CollisionComponent*> tempCollisionComponents;
 
     WorldStatePacket currentWorldState;
+
+    bool playerConnected = false;
 };
