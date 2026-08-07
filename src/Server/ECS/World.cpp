@@ -64,19 +64,17 @@ void World::OnPlayerInput(int entityId, bool up, bool down)
     input.down = down;
 }
 
-const WorldStatePacket& World::GetWorldState() const
+const WorldStatePacket& World::GetWorldState()
 {
-    WorldStatePacket packet;
-
     const ComponentData<PositionComponent>& positionData = registry->GetComponentData<PositionComponent>();
-    packet.count = positionData.dense.size();
+    currentWorldState.count = positionData.dense.size();
 
     for (int i = 0; i < positionData.dense.size(); ++i)
     {
         const int entityId = positionData.dense[i];
         const float x = positionData.components[i].x;
         const float y = positionData.components[i].y;
-        packet.entities[i] = { entityId, x, y };
+        currentWorldState.entities[i] = { entityId, x, y };
     }
-    return packet;
+    return currentWorldState;
 }

@@ -7,7 +7,6 @@
 #include "PlayerInputPacket.h"
 #include "EngineContext.h"
 #include "ECS/World.h"
-#include "WorldStatePacket.h"
 
 NetworkSystem::NetworkSystem()
 {

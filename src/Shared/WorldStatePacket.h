@@ -15,6 +15,6 @@ constexpr size_t MAX_ENTITIES = 32;
 
 struct WorldStatePacket 
 {
-    uint32_t count;
+    uint32_t count = 0;
     EntityState entities[MAX_ENTITIES];
 };
