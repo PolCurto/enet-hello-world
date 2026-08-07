@@ -146,7 +146,6 @@ void NetworkSystem::ListenToServer(const EngineContext& engineContext)
         case ENET_EVENT_TYPE_RECEIVE:
         {
             const WorldStatePacket* worldStatePacket = reinterpret_cast<const WorldStatePacket*>(event.packet->data);
-            std::cout << "[CLIENTE] Recibido WorldStatePacket con " << worldStatePacket->count << " entidades.\n";
 
             SendWorldStateToRender(*worldStatePacket, engineContext);
 

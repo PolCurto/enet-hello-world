@@ -92,8 +92,6 @@ void NetworkSystem::BroadcastWorldState(const EngineContext& engineContext)
 {
     const WorldStatePacket& worldState = engineContext.world->GetWorldState();
 
-    std::cout << "[SERVIDOR] Enviando WorldStatePacket con " << worldState.count << " entidades.\n";
-
     ENetPacket* packet = enet_packet_create(&worldState, sizeof(WorldStatePacket), ENET_PACKET_FLAG_RELIABLE);
 
     enet_host_broadcast(server, 0, packet);
