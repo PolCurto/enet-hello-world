@@ -1,0 +1,5 @@
+build/
+.vs/
+.git/
+out/
+*.exe
