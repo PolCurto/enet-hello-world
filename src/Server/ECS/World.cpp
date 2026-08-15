@@ -39,14 +39,16 @@ void World::Init()
 
 GameState World::Update(const float deltaTime)
 {
-    registry->GetComponentsUnion(tempInputComponents, tempMovementComponents);
+    registry->GetComponentsUnion(tempEntityIds, tempInputComponents, tempMovementComponents);
     inputSystem->UpdateComponents(tempInputComponents, tempMovementComponents);
 
-    registry->GetComponentsUnion(tempMovementComponents, tempTransformComponents);
+    registry->GetComponentsUnion(tempEntityIds, tempMovementComponents, tempTransformComponents);
     movementSystem->UpdateComponents(tempMovementComponents, tempTransformComponents, deltaTime);
 
-    registry->GetComponentsUnion(tempTransformComponents, tempMovementComponents, tempCollisionComponents);
-    collisionSystem->UpdateComponents(tempTransformComponents, tempMovementComponents, tempCollisionComponents);
+    registry->GetComponentsUnion(tempEntityIds, tempTransformComponents, tempMovementComponents, tempCollisionComponents);
+    const std::vector<CollisionEvent>& collisionEvents = collisionSystem->UpdateComponents(tempEntityIds, tempTransformComponents, tempMovementComponents, tempCollisionComponents);
+
+    // TODO: Score system usa els collisionEvents.
 
     return GameState::Update;
 }

@@ -38,6 +38,7 @@ private:
     std::unique_ptr<MovementSystem> movementSystem;
     std::unique_ptr<CollisionSystem> collisionSystem;
 
+    std::vector<int> tempEntityIds;
     std::vector<InputComponent*> tempInputComponents;
     std::vector<MovementComponent*> tempMovementComponents;
     std::vector<TransformComponent*> tempTransformComponents;

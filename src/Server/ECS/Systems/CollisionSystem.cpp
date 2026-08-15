@@ -9,10 +9,13 @@
 constexpr float SCREEN_WIDTH = 800.0f;
 constexpr float SCREEN_HEIGHT = 600.0f;
 
-void CollisionSystem::UpdateComponents(const std::vector<TransformComponent*>& transformComponents,
-                                        const std::vector<MovementComponent*>& movementComponents,
-                                        const std::vector<CollisionComponent*>& collisionComponents)
+const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::vector<int>& entityIds,
+                                                                     const std::vector<TransformComponent*>& transformComponents,
+                                                                     const std::vector<MovementComponent*>& movementComponents,
+                                                                     const std::vector<CollisionComponent*>& collisionComponents)
 {
+    collisionEvents.clear();
+
     for (size_t i = 0; i < transformComponents.size(); ++i)
     {
         TransformComponent& transform = *transformComponents[i];
@@ -23,15 +26,14 @@ void CollisionSystem::UpdateComponents(const std::vector<TransformComponent*>& t
 
         for (size_t j = 0; j < transformComponents.size(); ++j)
         {
-            if (i == j) continue; // Skip self
-
+            if (i == j) continue;
             const TransformComponent& otherTransform = *transformComponents[j];
             const CollisionComponent& otherCollision = *collisionComponents[j];
 
             bool isColliding = !(transform.x + transform.w < otherTransform.x ||
-                                    transform.x > otherTransform.x + otherTransform.w ||
-                                    transform.y + transform.h < otherTransform.y ||
-                                    transform.y > otherTransform.y + otherTransform.h);
+                                transform.x > otherTransform.x + otherTransform.w ||
+                                transform.y + transform.h < otherTransform.y ||
+                                transform.y > otherTransform.y + otherTransform.h);
 
             if (isColliding)
             {
@@ -45,9 +47,12 @@ void CollisionSystem::UpdateComponents(const std::vector<TransformComponent*>& t
                     movement.speedX = 0.0f;
                     movement.speedY = 0.0f;
                 }
+
+                collisionEvents.push_back({entityIds[i], entityIds[j]});
             }
         }
     }
+    return collisionEvents; 
 }    
 
 void CollisionSystem::CheckScreenBoundaries(TransformComponent& transformComponent,

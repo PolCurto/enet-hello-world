@@ -36,6 +36,7 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/Systems/InputSystem.h
     src/Server/ECS/Systems/MovementSystem.h
     src/Server/ECS/Systems/CollisionSystem.h
+    src/Server/ECS/Utils/CollisionEvent.h
     src/Shared/GameState.h
 )
 target_link_libraries(GameServer PRIVATE 

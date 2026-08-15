@@ -60,9 +60,11 @@ public:
     }
 
     template <typename... Comps>
-    void GetComponentsUnion(std::vector<Comps*>&... outComponents)
+    void GetComponentsUnion(std::vector<int>& outEntityIds, std::vector<Comps*>&... outComponents)
     {
+        outEntityIds.clear();
         (outComponents.clear(), ...);
+
         if (((std::get<ComponentData<Comps>>(components).dense.empty()) || ...)) 
         {
             return;
@@ -85,8 +87,10 @@ public:
         for (int entityId : *smallestDense)
         {
             bool hasAll = (HasComponent<Comps>(entityId) && ...);
+
             if (hasAll)
             {
+                outEntityIds.push_back(entityId);
                 (outComponents.push_back(&GetComponent<Comps>(entityId)), ...);
             }
         }

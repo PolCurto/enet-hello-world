@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "../Utils/CollisionEvent.h"
+
 struct MovementComponent;
 struct TransformComponent;
 struct CollisionComponent;
@@ -12,12 +14,15 @@ public:
     CollisionSystem() = default;
     ~CollisionSystem() = default;
 
-    void UpdateComponents(const std::vector<TransformComponent*>& transformComponents,
-                          const std::vector<MovementComponent*>& movementComponents,
-                          const std::vector<CollisionComponent*>& collisionComponents);
+    const std::vector<CollisionEvent>& UpdateComponents(const std::vector<int>& entityIds,
+                                                        const std::vector<TransformComponent*>& transformComponents,
+                                                        const std::vector<MovementComponent*>& movementComponents,
+                                                        const std::vector<CollisionComponent*>& collisionComponents);
 
 private:
-    void CheckScreenBoundaries( TransformComponent& transformComponent,
-                                MovementComponent& movementComponent,
-                                CollisionComponent& collisionComponent);
+    void CheckScreenBoundaries(TransformComponent& transformComponent,
+                               MovementComponent& movementComponent,
+                               CollisionComponent& collisionComponent);
+
+    std::vector<CollisionEvent> collisionEvents;
 };
