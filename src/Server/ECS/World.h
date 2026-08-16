@@ -9,6 +9,7 @@ class Registry;
 class InputSystem;
 class MovementSystem;
 class CollisionSystem;
+class ScoreSystem;
 
 enum class GameState;
 
@@ -29,7 +30,7 @@ public:
     int OnPlayerConnected();
     void OnPlayerInput(int entityId, bool up, bool down);
 
-    const WorldStatePacket& GetWorldState();
+    const Packet::WorldStatePacket& GetWorldState();
 
 private:
     std::unique_ptr<Registry> registry;
@@ -37,6 +38,7 @@ private:
     std::unique_ptr<InputSystem> inputSystem;
     std::unique_ptr<MovementSystem> movementSystem;
     std::unique_ptr<CollisionSystem> collisionSystem;
+    std::unique_ptr<ScoreSystem> scoreSystem;
 
     std::vector<int> tempEntityIds;
     std::vector<InputComponent*> tempInputComponents;
@@ -44,7 +46,7 @@ private:
     std::vector<TransformComponent*> tempTransformComponents;
     std::vector<CollisionComponent*> tempCollisionComponents;
 
-    WorldStatePacket currentWorldState;
+    Packet::WorldStatePacket currentWorldState;
 
     bool playerConnected = false;
 };

@@ -54,7 +54,7 @@ public:
     }
 
     template <typename T>
-    const ComponentData<T>& GetComponentData()
+    const ComponentData<T>& GetComponentData() const
     {
         return std::get<ComponentData<T>>(components);
     }

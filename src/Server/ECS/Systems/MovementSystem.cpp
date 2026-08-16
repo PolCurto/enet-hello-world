@@ -5,9 +5,6 @@
 #include "../Components/MovementComponent.h"
 #include "../Components/TransformComponent.h"
 
-// TODO: DELETE
-#include <iostream>
-
 void MovementSystem::UpdateComponents(const std::vector<MovementComponent*>& movementComponents, 
                                       std::vector<TransformComponent*>& transformComponents, 
                                       const float deltaTime)

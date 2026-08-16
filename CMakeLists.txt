@@ -22,6 +22,7 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/Systems/InputSystem.cpp
     src/Server/ECS/Systems/MovementSystem.cpp
     src/Server/ECS/Systems/CollisionSystem.cpp
+    src/Server/ECS/Systems/ScoreSystem.cpp
 
     src/Server/NetworkSystem.h
     src/Server/EngineContext.h
@@ -33,9 +34,11 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/Components/InputComponent.h
     src/Server/ECS/Components/TransformComponent.h
     src/Server/ECS/Components/CollisionComponent.h
+    src/Server/ECS/Components/ScoreComponent.h
     src/Server/ECS/Systems/InputSystem.h
     src/Server/ECS/Systems/MovementSystem.h
     src/Server/ECS/Systems/CollisionSystem.h
+    src/Server/ECS/Systems/ScoreSystem.h
     src/Server/ECS/Utils/CollisionEvent.h
     src/Shared/GameState.h
 )
@@ -47,13 +50,14 @@ target_link_libraries(GameServer PRIVATE
 # --- CONFIGURACIÓN DEL CLIENTE ---
 add_executable(GameClient 
 	src/Client/client.cpp
-	src/Client/EngineContext.h
-	src/Client/InputSystem.h
 	src/Client/InputSystem.cpp
-	src/Client/NetworkSystem.h
 	src/Client/NetworkSystem.cpp
-	src/Client/RenderSystem.h
 	src/Client/RenderSystem.cpp
+
+    src/Client/EngineContext.h
+	src/Client/InputSystem.h
+	src/Client/NetworkSystem.h
+	src/Client/RenderSystem.h
 )
 
 target_link_libraries(GameClient PRIVATE
