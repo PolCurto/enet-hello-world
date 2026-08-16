@@ -34,7 +34,7 @@ target_sources(GameServer PRIVATE
     src/Server/ECS/Components/InputComponent.h
     src/Server/ECS/Components/TransformComponent.h
     src/Server/ECS/Components/CollisionComponent.h
-    src/Server/ECS/Components/ScoreComponent.h
+    src/Server/ECS/Components/GoalComponent.h
     src/Server/ECS/Systems/InputSystem.h
     src/Server/ECS/Systems/MovementSystem.h
     src/Server/ECS/Systems/CollisionSystem.h

@@ -21,6 +21,7 @@ public:
 
 	void FillRenderObjects(const std::vector<float>& values); 
 	void RenderObjectsToScreen();
+	void SetScores(const std::vector<int>& scores);
 
 private:
     SDL_Window* window = nullptr;

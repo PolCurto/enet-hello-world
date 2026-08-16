@@ -6,6 +6,9 @@ struct TransformComponent;
 
 namespace Packet
 {
+    constexpr size_t MAX_ENTITIES = 32;
+    constexpr size_t MAX_PLAYERS = 2;
+    
     struct EntityState
     {
         int entityId;
@@ -20,9 +23,6 @@ namespace Packet
         int score[MAX_PLAYERS];
         // TODO: ADd state like: waiting, playing, game over
     };
-
-    constexpr size_t MAX_ENTITIES = 32;
-    constexpr size_t MAX_PLAYERS = 2;
 
     struct WorldStatePacket 
     {

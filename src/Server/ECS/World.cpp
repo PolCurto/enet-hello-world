@@ -5,6 +5,7 @@
 #include "Systems/InputSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/ScoreSystem.h"
 #include "Components/InputComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/TransformComponent.h"

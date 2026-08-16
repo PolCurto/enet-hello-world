@@ -145,7 +145,7 @@ void NetworkSystem::ListenToServer(const EngineContext& engineContext)
         switch (event.type) {
         case ENET_EVENT_TYPE_RECEIVE:
         {
-            const WorldStatePacket* worldStatePacket = reinterpret_cast<const WorldStatePacket*>(event.packet->data);
+            const Packet::WorldStatePacket* worldStatePacket = reinterpret_cast<const Packet::WorldStatePacket*>(event.packet->data);
 
             SendWorldStateToRender(*worldStatePacket, engineContext);
 
@@ -160,18 +160,20 @@ void NetworkSystem::ListenToServer(const EngineContext& engineContext)
     }
 }
 
-void NetworkSystem::SendWorldStateToRender(const WorldStatePacket& worldStatePacket, const EngineContext& engineContext)
+void NetworkSystem::SendWorldStateToRender(const Packet::WorldStatePacket& worldStatePacket, const EngineContext& engineContext)
 {
     std::vector<float> renderValues;
 
     for (int i = 0; i < worldStatePacket.count; ++i)
     {
-        const EntityState& entity = worldStatePacket.entities[i];
+        const Packet::EntityState& entity = worldStatePacket.entities[i];
         renderValues.push_back(entity.x);
         renderValues.push_back(entity.y);
         renderValues.push_back(entity.w);
         renderValues.push_back(entity.h);
     }
+
+    // TODO: Add scores
 
     engineContext.renderSystem->FillRenderObjects(renderValues);
 }

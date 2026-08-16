@@ -6,7 +6,11 @@ enum class GameState;
 
 struct EngineContext;
 struct PlayerInputPacket;
-struct WorldStatePacket;
+
+namespace Packet
+{
+	struct WorldStatePacket;
+}
 
 class NetworkSystem
 {
@@ -27,7 +31,7 @@ private:
 	void SendInputData(const PlayerInputPacket& inputData);
 	void ListenToServer(const EngineContext& engineContext);
 
-	void SendWorldStateToRender(const WorldStatePacket& worldStatePacket, const EngineContext& engineContext);
+	void SendWorldStateToRender(const Packet::WorldStatePacket& worldStatePacket, const EngineContext& engineContext);
 
 private:
 	ENetPeer* peer = nullptr;

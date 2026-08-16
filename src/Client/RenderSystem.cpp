@@ -61,3 +61,8 @@ void RenderSystem::FillRenderObjects(const std::vector<float>& values)
         renderObjects.push_back(rect);
     }
 }
+
+void RenderSystem::SetScores(const std::vector<int>& scores)
+{
+
+}

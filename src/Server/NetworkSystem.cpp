@@ -90,9 +90,9 @@ void NetworkSystem::Exit()
 
 void NetworkSystem::BroadcastWorldState(const EngineContext& engineContext)
 {
-    const WorldStatePacket& worldState = engineContext.world->GetWorldState();
+    const Packet::WorldStatePacket& worldState = engineContext.world->GetWorldState();
 
-    ENetPacket* packet = enet_packet_create(&worldState, sizeof(WorldStatePacket), ENET_PACKET_FLAG_RELIABLE);
+    ENetPacket* packet = enet_packet_create(&worldState, sizeof(Packet::WorldStatePacket), ENET_PACKET_FLAG_RELIABLE);
 
     enet_host_broadcast(server, 0, packet);
 }

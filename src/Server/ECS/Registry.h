@@ -7,6 +7,9 @@
 #include "Components/TransformComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/CollisionComponent.h"
+#include "Components/GoalComponent.h"
+#include "Components/BallComponent.h"
+
 
 class Registry
 {
@@ -15,7 +18,9 @@ public:
             ComponentData<InputComponent>{},
             ComponentData<TransformComponent>{},
             ComponentData<MovementComponent>{},
-            ComponentData<CollisionComponent>{}
+            ComponentData<CollisionComponent>{},
+            ComponentData<GoalComponent>{},
+            ComponentData<BallComponent>{}
         )),
         nextEntityId(0)
     {
@@ -110,7 +115,9 @@ private:
         ComponentData<InputComponent>, 
         ComponentData<TransformComponent>, 
         ComponentData<MovementComponent>,
-        ComponentData<CollisionComponent>
+        ComponentData<CollisionComponent>,
+        ComponentData<GoalComponent>,
+        ComponentData<BallComponent>
     > components;
 
     int nextEntityId = 0;
