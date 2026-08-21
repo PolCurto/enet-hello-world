@@ -20,6 +20,7 @@ namespace Packet
 
     struct GameState
     {
+        uint32_t playerCount = 0;
         int score[MAX_PLAYERS];
         // TODO: ADd state like: waiting, playing, game over
     };
@@ -29,6 +30,6 @@ namespace Packet
         uint32_t count = 0;
         EntityState entities[MAX_ENTITIES];
         GameState gameState;
-};
+    };
 }
 

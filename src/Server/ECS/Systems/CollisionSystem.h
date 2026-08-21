@@ -8,6 +8,8 @@ struct MovementComponent;
 struct TransformComponent;
 struct CollisionComponent;
 
+class Registry;
+
 class CollisionSystem
 {
 public:
@@ -16,13 +18,14 @@ public:
 
     const std::vector<CollisionEvent>& UpdateComponents(const std::vector<int>& entityIds,
                                                         const std::vector<TransformComponent*>& transformComponents,
-                                                        const std::vector<MovementComponent*>& movementComponents,
-                                                        const std::vector<CollisionComponent*>& collisionComponents);
+                                                        const std::vector<CollisionComponent*>& collisionComponents,
+                                                        Registry& registry);
 
 private:
     void CheckScreenBoundaries(TransformComponent& transformComponent,
-                               MovementComponent& movementComponent,
-                               CollisionComponent& collisionComponent);
+                               CollisionComponent& collisionComponent,
+                               Registry& registry,
+                               int entityId);
 
     std::vector<CollisionEvent> collisionEvents;
 };

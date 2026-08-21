@@ -13,6 +13,7 @@
 #include "WorldStatePacket.h"
 
 #include <iostream>
+#include <algorithm>
 
 World::World()
 {
@@ -34,11 +35,23 @@ World::~World()
 
 void World::Init()
 {
-    const int entityId = registry->AddEntity();
-
-    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 15.0f, 15.0f });
+    // Ball
+    int entityId = registry->AddEntity();
+    registry->AddComponent(entityId, TransformComponent { 200.0f, 200.0f, 15.0f, 15.0f });
     registry->AddComponent(entityId, MovementComponent { 400.0f, 200.0f });
     registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce });
+    registry->AddComponent(entityId, BallComponent {});
+
+    // Goals
+    entityId = registry->AddEntity();
+    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 15.0f, 1000.0f });
+    registry->AddComponent(entityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
+    registry->AddComponent(entityId, GoalComponent {0, 1});
+
+    entityId = registry->AddEntity();
+    registry->AddComponent(entityId, TransformComponent { 600.0f, 0.0f, 15.0f, 1000.0f });
+    registry->AddComponent(entityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
+    registry->AddComponent(entityId, GoalComponent {0, 2});
 }
 
 GameState World::Update(const float deltaTime)
@@ -49,10 +62,10 @@ GameState World::Update(const float deltaTime)
     registry->GetComponentsUnion(tempEntityIds, tempMovementComponents, tempTransformComponents);
     movementSystem->UpdateComponents(tempMovementComponents, tempTransformComponents, deltaTime);
 
-    registry->GetComponentsUnion(tempEntityIds, tempTransformComponents, tempMovementComponents, tempCollisionComponents);
-    const std::vector<CollisionEvent>& collisionEvents = collisionSystem->UpdateComponents(tempEntityIds, tempTransformComponents, tempMovementComponents, tempCollisionComponents);
+    registry->GetComponentsUnion(tempEntityIds, tempTransformComponents, tempCollisionComponents);
+    const std::vector<CollisionEvent>& collisionEvents = collisionSystem->UpdateComponents(tempEntityIds, tempTransformComponents, tempCollisionComponents, *registry);
 
-    // TODO: Score system usa els collisionEvents.
+    scoreSystem->UpdateComponents(*registry, collisionEvents);
 
     return GameState::Update;
 }
@@ -70,10 +83,10 @@ int World::OnPlayerConnected()
     }
     else
     {
-        registry->AddComponent(entityId, TransformComponent { 300.0f, 100.0f, 20.0f, 100.0f });
+        registry->AddComponent(entityId, TransformComponent { 600.0f, 100.0f, 20.0f, 100.0f });
     }
     registry->AddComponent(entityId, MovementComponent { 0.0f, 0.0f });
-    registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Static });
+    registry->AddComponent(entityId, CollisionComponent { 20.0f, 100.0f, CollisionType::Static });
 
     return entityId;
 }
@@ -88,9 +101,8 @@ void World::OnPlayerInput(int entityId, bool up, bool down)
 const Packet::WorldStatePacket& World::GetWorldState()
 {
     const ComponentData<TransformComponent>& transformData = registry->GetComponentData<TransformComponent>();
-    currentWorldState.count = transformData.dense.size();
-
-    for (int i = 0; i < transformData.dense.size(); ++i)
+    currentWorldState.count = std::min(transformData.dense.size(), Packet::MAX_ENTITIES);
+    for (size_t i = 0; i < currentWorldState.count; ++i)
     {
         if (i >= Packet::MAX_ENTITIES)
         {
@@ -106,7 +118,8 @@ const Packet::WorldStatePacket& World::GetWorldState()
     }
 
     const ComponentData<GoalComponent> goalData = registry->GetComponentData<GoalComponent>();
-    for (int i = 0; i < goalData.dense.size() && i < Packet::MAX_PLAYERS; ++i)
+    currentWorldState.gameState.playerCount = std::min(goalData.dense.size(), Packet::MAX_PLAYERS);
+    for (size_t i = 0; i < currentWorldState.gameState.playerCount; ++i)
     {
         if (i >= Packet::MAX_PLAYERS)
         {
@@ -115,6 +128,5 @@ const Packet::WorldStatePacket& World::GetWorldState()
 
         currentWorldState.gameState.score[i] = goalData.components[i].score;
     }
-
     return currentWorldState;
 }

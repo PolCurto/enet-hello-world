@@ -1,6 +1,7 @@
 #include "NetworkSystem.h"
 
 #include <iostream>
+#include <algorithm>
 #include <enet/enet.h>
 
 #include "EngineContext.h"
@@ -145,6 +146,12 @@ void NetworkSystem::ListenToServer(const EngineContext& engineContext)
         switch (event.type) {
         case ENET_EVENT_TYPE_RECEIVE:
         {
+            if (event.packet->dataLength < sizeof(Packet::WorldStatePacket))
+            {
+                enet_packet_destroy(event.packet);
+                break;
+            }
+
             const Packet::WorldStatePacket* worldStatePacket = reinterpret_cast<const Packet::WorldStatePacket*>(event.packet->data);
 
             SendWorldStateToRender(*worldStatePacket, engineContext);
@@ -163,8 +170,8 @@ void NetworkSystem::ListenToServer(const EngineContext& engineContext)
 void NetworkSystem::SendWorldStateToRender(const Packet::WorldStatePacket& worldStatePacket, const EngineContext& engineContext)
 {
     std::vector<float> renderValues;
-
-    for (int i = 0; i < worldStatePacket.count; ++i)
+    const uint32_t entityCount = (std::min)(worldStatePacket.count, static_cast<uint32_t>(Packet::MAX_ENTITIES));
+        for (uint32_t i = 0; i < entityCount; ++i)
     {
         const Packet::EntityState& entity = worldStatePacket.entities[i];
         renderValues.push_back(entity.x);
@@ -172,8 +179,13 @@ void NetworkSystem::SendWorldStateToRender(const Packet::WorldStatePacket& world
         renderValues.push_back(entity.w);
         renderValues.push_back(entity.h);
     }
-
-    // TODO: Add scores
-
     engineContext.renderSystem->FillRenderObjects(renderValues);
+
+    std::vector<int> scores;
+    const uint32_t playerCount = (std::min)(worldStatePacket.gameState.playerCount, static_cast<uint32_t>(Packet::MAX_PLAYERS));
+    for (uint32_t i = 0; i < playerCount; ++i)
+    {
+        scores.push_back(worldStatePacket.gameState.score[i]);
+    }
+    engineContext.renderSystem->SetScoresToDraw(scores);
 }

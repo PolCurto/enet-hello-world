@@ -5,24 +5,24 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/MovementComponent.h"
 #include "../Components/CollisionComponent.h"
+#include "../Registry.h"
 
 constexpr float SCREEN_WIDTH = 800.0f;
 constexpr float SCREEN_HEIGHT = 600.0f;
 
 const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::vector<int>& entityIds,
                                                                      const std::vector<TransformComponent*>& transformComponents,
-                                                                     const std::vector<MovementComponent*>& movementComponents,
-                                                                     const std::vector<CollisionComponent*>& collisionComponents)
+                                                                     const std::vector<CollisionComponent*>& collisionComponents,
+                                                                     Registry& registry)
 {
     collisionEvents.clear();
 
     for (size_t i = 0; i < transformComponents.size(); ++i)
     {
         TransformComponent& transform = *transformComponents[i];
-        MovementComponent& movement = *movementComponents[i];
         CollisionComponent& collision = *collisionComponents[i];
 
-        CheckScreenBoundaries(transform, movement, collision);
+        CheckScreenBoundaries(transform, collision, registry, entityIds[i]);
 
         for (size_t j = 0; j < transformComponents.size(); ++j)
         {
@@ -35,17 +35,20 @@ const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::
                                 transform.y + transform.h < otherTransform.y ||
                                 transform.y > otherTransform.y + otherTransform.h);
 
+            // TODO: Remove this from here, raise a collisionEvent with tags and handle in each system
             if (isColliding)
             {
-                if (collision.type == CollisionType::Bounce)
+                if (collision.type == CollisionType::Bounce && registry.HasComponent<MovementComponent>(entityIds[i]))
                 {
-                    movement.speedX = -movement.speedX;
-                    movement.speedY = -movement.speedY;
+                    MovementComponent& comp = registry.GetComponent<MovementComponent>(entityIds[i]);
+                    comp.speedX = -comp.speedX;
+                    comp.speedY = -comp.speedY;
                 }
-                else if (collision.type == CollisionType::Static)
+                else if (collision.type == CollisionType::Static && registry.HasComponent<MovementComponent>(entityIds[i]))
                 {
-                    movement.speedX = 0.0f;
-                    movement.speedY = 0.0f;
+                    MovementComponent& comp = registry.GetComponent<MovementComponent>(entityIds[i]);
+                    comp.speedX = 0;
+                    comp.speedY = 0;
                 }
 
                 collisionEvents.push_back({entityIds[i], entityIds[j]});
@@ -56,9 +59,17 @@ const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::
 }    
 
 void CollisionSystem::CheckScreenBoundaries(TransformComponent& transformComponent,
-                                            MovementComponent& movementComponent,
-                                            CollisionComponent& collisionComponent)
+                                            CollisionComponent& collisionComponent,
+                                            Registry& registry,
+                                            int entityId)
 {
+    if (!registry.HasComponent<MovementComponent>(entityId))
+    {
+        return;
+    }
+
+    MovementComponent& movementComponent = registry.GetComponent<MovementComponent>(entityId);
+
     if (transformComponent.x < 0.0f)
     {
         transformComponent.x = 0.0f;

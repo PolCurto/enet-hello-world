@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(unofficial-enet CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3_ttf REQUIRED)
 
 # --- CONFIGURACIÓN DEL SERVIDOR ---
 add_executable(GameServer src/Server/server.cpp)
@@ -58,13 +59,18 @@ add_executable(GameClient
 	src/Client/InputSystem.h
 	src/Client/NetworkSystem.h
 	src/Client/RenderSystem.h
+    src/Client/ScoreDisplay.h
 )
 
 target_link_libraries(GameClient PRIVATE
 	unofficial::enet::enet 
 	SDL3::SDL3
+    SDL3_ttf::SDL3_ttf
 	winmm wsock32 ws2_32
 )
 
 target_include_directories(GameClient PRIVATE src/Shared)
 target_include_directories(GameServer PRIVATE src/Shared)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets 
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
