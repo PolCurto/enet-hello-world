@@ -15,6 +15,11 @@
 #include <iostream>
 #include <algorithm>
 
+constexpr float PLAYER_1_POS = 0.0f;
+constexpr float PLAYER_2_POS = 800.0f;
+
+constexpr int MAX_PLAYERS = 2;
+
 World::World()
 {
     registry = std::make_unique<Registry>();
@@ -41,21 +46,15 @@ void World::Init()
     registry->AddComponent(entityId, MovementComponent { 400.0f, 200.0f });
     registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce });
     registry->AddComponent(entityId, BallComponent {});
-
-    // Goals
-    entityId = registry->AddEntity();
-    registry->AddComponent(entityId, TransformComponent { 0.0f, 0.0f, 15.0f, 1000.0f });
-    registry->AddComponent(entityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
-    registry->AddComponent(entityId, GoalComponent {0, 1});
-
-    entityId = registry->AddEntity();
-    registry->AddComponent(entityId, TransformComponent { 600.0f, 0.0f, 15.0f, 1000.0f });
-    registry->AddComponent(entityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
-    registry->AddComponent(entityId, GoalComponent {0, 2});
 }
 
-GameState World::Update(const float deltaTime)
+GameState World::Update(float deltaTime)
 {
+    if (worldStatus != WorldStatus::Playing)
+    {
+        deltaTime = 0.0f;
+    }
+
     registry->GetComponentsUnion(tempEntityIds, tempInputComponents, tempMovementComponents);
     inputSystem->UpdateComponents(tempInputComponents, tempMovementComponents);
 
@@ -72,23 +71,26 @@ GameState World::Update(const float deltaTime)
 
 int World::OnPlayerConnected()
 {
-    const int entityId = registry->AddEntity();
+    const int playerEntityId = registry->AddEntity();
+    const float x = players == 0 ? PLAYER_1_POS : PLAYER_2_POS;
+    const float y = 300.0f;
+    registry->AddComponent(playerEntityId, TransformComponent { x, y, 20.0f, 100.0f });     
+    registry->AddComponent(playerEntityId, InputComponent { false, false });
+    registry->AddComponent(playerEntityId, MovementComponent { 0.0f, 0.0f });
+    registry->AddComponent(playerEntityId, CollisionComponent { 20.0f, 100.0f, CollisionType::Static });
 
-    registry->AddComponent(entityId, InputComponent { false, false });
+    const int goalEntityId = registry->AddEntity();
+    registry->AddComponent(goalEntityId, TransformComponent { x - (5 * players), 0.0f, 5.0f, 800.0f });
+    registry->AddComponent(goalEntityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
+    registry->AddComponent(goalEntityId, GoalComponent {0, players + 1});  
 
-    if (!playerConnected)
+    ++players;
+    if (players == MAX_PLAYERS)
     {
-        registry->AddComponent(entityId, TransformComponent { 0.0f, 100.0f, 20.0f, 100.0f });       
-        playerConnected = true;
+        worldStatus = WorldStatus::Playing;
     }
-    else
-    {
-        registry->AddComponent(entityId, TransformComponent { 600.0f, 100.0f, 20.0f, 100.0f });
-    }
-    registry->AddComponent(entityId, MovementComponent { 0.0f, 0.0f });
-    registry->AddComponent(entityId, CollisionComponent { 20.0f, 100.0f, CollisionType::Static });
 
-    return entityId;
+    return playerEntityId;
 }
 
 void World::OnPlayerInput(int entityId, bool up, bool down)

@@ -12,12 +12,12 @@ private:
     SDL_FRect renderQuad = { 0, 0, 0, 0 };
     TTF_Font* font = nullptr;
     float x = 0.0f;
-    float y = 100.0f;
+    float y = 50.0f;
 
 public:
     ScoreDisplay(TTF_Font* f, int id) : font(f) 
     {
-        x = 50.0f + id * 200.0f;
+        x = 300.0f + id * 150.0f;
     }
     ~ScoreDisplay() 
     {

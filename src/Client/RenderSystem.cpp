@@ -16,7 +16,8 @@ RenderSystem::RenderSystem()
 
 RenderSystem::~RenderSystem()
 {
-    if (font) {
+    if (font) 
+    {
         TTF_CloseFont(font);
     }
 }
@@ -35,12 +36,14 @@ bool RenderSystem::Init()
 
     SDL_Log("Window and renderer created successfully.");
 
-    font = TTF_OpenFont("assets/Tenada.ttf", 56);
+    font = TTF_OpenFont("assets/Tenada.ttf", 32);
     if (!font) 
     {
         SDL_Log("Couldn't load font: %s", SDL_GetError());
         return false;
     }
+    const std::vector<int> initialScores = { 0, 0 };
+    SetScoresToDraw(initialScores);
     return true;
 }
 

@@ -34,7 +34,7 @@ private:
     SDL_Renderer* renderer = nullptr;
 
 	std::vector<SDL_FRect> renderObjects;
-	std::vector<int> oldScores;
+	std::vector<int> oldScores { -1, -1 };
 
 	std::vector<std::unique_ptr<ScoreDisplay>> scoreDisplays;
 	TTF_Font* font = nullptr;

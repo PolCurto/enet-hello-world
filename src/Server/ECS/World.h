@@ -18,6 +18,13 @@ struct MovementComponent;
 struct TransformComponent;
 struct CollisionComponent;
 
+enum class WorldStatus
+{
+    Waiting,
+    Playing,
+    End
+};
+
 class World
 {
 public:
@@ -25,7 +32,7 @@ public:
     ~World();
 
     void Init();
-    GameState Update(const float deltaTime);
+    GameState Update(float deltaTime);
 
     int OnPlayerConnected();
     void OnPlayerInput(int entityId, bool up, bool down);
@@ -48,5 +55,6 @@ private:
 
     Packet::WorldStatePacket currentWorldState;
 
-    bool playerConnected = false;
+    int players = 0;
+    WorldStatus worldStatus;
 };
