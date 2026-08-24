@@ -9,7 +9,7 @@
 #include "../Components/TransformComponent.h"
 
 constexpr float RESPAWN_SPEED = 400.0f;
-constexpr float TWO_PI = 6.28318530718f;
+constexpr float MAX_RESPAWN_ANGLE = 45.0f * (3.14159265359f / 180.0f);
 constexpr float BOUNCE_SPEED_MULTIPLIER = 1.05f;
 constexpr float MAX_BOUNCE_SPEED = 1000.0f;
 
@@ -70,10 +70,12 @@ void MovementSystem::RespawnBall(TransformComponent& ballTransform, MovementComp
     ballTransform.x = 375.0f;
     ballTransform.y = 300.0f;
     
-    std::uniform_real_distribution<float> angleDistribution(0.0f, TWO_PI);
+    std::uniform_real_distribution<float> angleDistribution(-MAX_RESPAWN_ANGLE, MAX_RESPAWN_ANGLE);
+    std::bernoulli_distribution directionDistribution(0.5);
     const float angle = angleDistribution(randomEngine);
+    const float directionX = directionDistribution(randomEngine) ? 1.0f : -1.0f;
 
-    ballMovement.speedX = RESPAWN_SPEED * std::cos(angle);
+    ballMovement.speedX = RESPAWN_SPEED * std::cos(angle) * directionX;
     ballMovement.speedY = RESPAWN_SPEED * std::sin(angle);
 }
 

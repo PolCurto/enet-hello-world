@@ -24,9 +24,8 @@ const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::
 
         CheckScreenBoundaries(transform, collision, registry, entityIds[i]);
 
-        for (size_t j = 0; j < transformComponents.size(); ++j)
+        for (size_t j = i + 1; j < transformComponents.size(); ++j)
         {
-            if (i == j) continue;
             const TransformComponent& otherTransform = *transformComponents[j];
             const CollisionComponent& otherCollision = *collisionComponents[j];
 
