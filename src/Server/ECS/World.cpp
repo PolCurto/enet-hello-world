@@ -42,7 +42,7 @@ void World::Init()
 {
     // Ball
     int entityId = registry->AddEntity();
-    registry->AddComponent(entityId, TransformComponent { 400.0f, 400.0f, 15.0f, 15.0f });
+    registry->AddComponent(entityId, TransformComponent { 375.0f, 300.0f, 15.0f, 15.0f });
     registry->AddComponent(entityId, MovementComponent { 400.0f, 200.0f });
     registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce, CollisionTag::Ball });
     registry->AddComponent(entityId, BallComponent {});

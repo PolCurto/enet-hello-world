@@ -27,43 +27,36 @@ void MovementSystem::UpdateComponents(const float deltaTime,
 
         for (const CollisionEvent event : collisionEvents)
         {
+            const CollisionData* ballData = nullptr;
+            const CollisionData* otherData = nullptr;
+
             if (event.entityA.entityId == entityIds[i] && event.entityA.collisionTag == CollisionTag::Ball)
             {
-                if (event.entityB.collisionTag == CollisionTag::Goal)
+                ballData = &event.entityA;
+                otherData = &event.entityB;
+            }
+            else if (event.entityB.entityId == entityIds[i] && event.entityB.collisionTag == CollisionTag::Ball)
+            {
+                ballData = &event.entityB;
+                otherData = &event.entityA;
+            }
+
+            if (!ballData) continue;
+
+            if (otherData->collisionTag == CollisionTag::Goal)
+            {
+                RespawnBall(transform, movement);
+            }
+            else if (otherData->collisionTag == CollisionTag::Paddle)
+            {
+                for (size_t j = 0; j < entityIds.size(); ++j)
                 {
-                    RespawnBall(transform, movement);
-                }
-                else if (event.entityB.collisionTag == CollisionTag::Paddle)
-                {
-                    for (size_t j = 0; j < entityIds.size(); ++j)
+                    if (entityIds[j] == otherData->entityId)
                     {
-                        if (entityIds[j] == event.entityB.entityId)
-                        {
-                            ApplyPaddleBounce(transform, movement, *transformComponents[j]);
-                        }
+                        ApplyPaddleBounce(transform, movement, *transformComponents[j]);
+                        break;
                     }
                 }
-            }
-            else if (event.entityB.entityId == entityIds[i] && event.entityA.collisionTag == CollisionTag::Ball)
-            {
-                if (event.entityA.collisionTag == CollisionTag::Goal)
-                {
-                    RespawnBall(transform, movement);
-                }
-                else if (event.entityA.collisionTag == CollisionTag::Paddle)
-                {
-                    for (size_t j = 0; j < entityIds.size(); ++j)
-                    {
-                        if (entityIds[j] == event.entityA.entityId)
-                        {
-                            ApplyPaddleBounce(transform, movement, *transformComponents[j]);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                continue;
             }
         }
 
@@ -74,19 +67,18 @@ void MovementSystem::UpdateComponents(const float deltaTime,
 
 void MovementSystem::RespawnBall(TransformComponent& ballTransform, MovementComponent& ballMovement)
 {
-    std::cout << "Respawn ball" << std::endl;
-    ballTransform.x = 400.0f;
-    ballTransform.y = 400.0f;
+    ballTransform.x = 375.0f;
+    ballTransform.y = 300.0f;
+    
     std::uniform_real_distribution<float> angleDistribution(0.0f, TWO_PI);
     const float angle = angleDistribution(randomEngine);
+
     ballMovement.speedX = RESPAWN_SPEED * std::cos(angle);
     ballMovement.speedY = RESPAWN_SPEED * std::sin(angle);
 }
 
 void MovementSystem::ApplyPaddleBounce(TransformComponent& ballTransform, MovementComponent& ballMovement, const TransformComponent& paddleTransform)
 {
-    std::cout << "Apply paddle bounce" << std::endl;
-
     const float ballCenterY = ballTransform.y + (ballTransform.h * 0.5f);
     const float paddleCenterY = paddleTransform.y + (paddleTransform.h * 0.5f);
     const float relativeIntersectY = ballCenterY - paddleCenterY;
