@@ -1,6 +1,9 @@
 #pragma once
 
+#include <random>
 #include <vector>
+
+#include "../Utils/CollisionEvent.h"
 
 struct MovementComponent;
 struct TransformComponent;
@@ -11,7 +14,16 @@ public:
     MovementSystem() = default;
     ~MovementSystem() = default;
 
-    void UpdateComponents(const std::vector<MovementComponent*>& movementComponents,
+    void UpdateComponents(const float deltaTime, 
+                          const std::vector<int>& entityIds,
+                          const std::vector<MovementComponent*>& movementComponents,
                           std::vector<TransformComponent*>& transformComponents,
-                          const float deltaTime);
+                          const std::vector<CollisionEvent>& collisionEvents);
+                        
+private:
+    void RespawnBall(TransformComponent& ballTransform, MovementComponent& ballMovement);
+
+    void ApplyPaddleBounce(TransformComponent& ballTransform, MovementComponent& ballMovement, const TransformComponent& paddleTransform);
+
+    std::mt19937 randomEngine { std::random_device{}() };
 };

@@ -1,7 +1,16 @@
 #pragma once
 
+#include "../Components/CollisionComponent.h"
+
+struct CollisionData
+{
+    int entityId;
+    CollisionType collisionType;
+    CollisionTag collisionTag;
+};
+
 struct CollisionEvent
 {
-    int entityA;
-    int entityB;
+    CollisionData entityA;
+    CollisionData entityB;
 };

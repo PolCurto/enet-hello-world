@@ -42,9 +42,9 @@ void World::Init()
 {
     // Ball
     int entityId = registry->AddEntity();
-    registry->AddComponent(entityId, TransformComponent { 200.0f, 200.0f, 15.0f, 15.0f });
+    registry->AddComponent(entityId, TransformComponent { 400.0f, 400.0f, 15.0f, 15.0f });
     registry->AddComponent(entityId, MovementComponent { 400.0f, 200.0f });
-    registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce });
+    registry->AddComponent(entityId, CollisionComponent { 15.0f, 15.0f, CollisionType::Bounce, CollisionTag::Ball });
     registry->AddComponent(entityId, BallComponent {});
 }
 
@@ -55,14 +55,14 @@ GameState World::Update(float deltaTime)
         deltaTime = 0.0f;
     }
 
+    registry->GetComponentsUnion(tempEntityIds, tempTransformComponents, tempCollisionComponents);
+    const std::vector<CollisionEvent>& collisionEvents = collisionSystem->UpdateComponents(tempEntityIds, tempTransformComponents, tempCollisionComponents, *registry);
+
     registry->GetComponentsUnion(tempEntityIds, tempInputComponents, tempMovementComponents);
     inputSystem->UpdateComponents(tempInputComponents, tempMovementComponents);
 
     registry->GetComponentsUnion(tempEntityIds, tempMovementComponents, tempTransformComponents);
-    movementSystem->UpdateComponents(tempMovementComponents, tempTransformComponents, deltaTime);
-
-    registry->GetComponentsUnion(tempEntityIds, tempTransformComponents, tempCollisionComponents);
-    const std::vector<CollisionEvent>& collisionEvents = collisionSystem->UpdateComponents(tempEntityIds, tempTransformComponents, tempCollisionComponents, *registry);
+    movementSystem->UpdateComponents(deltaTime, tempEntityIds, tempMovementComponents, tempTransformComponents, collisionEvents);
 
     scoreSystem->UpdateComponents(*registry, collisionEvents);
 
@@ -71,17 +71,19 @@ GameState World::Update(float deltaTime)
 
 int World::OnPlayerConnected()
 {
+    // Paddle
     const int playerEntityId = registry->AddEntity();
     const float x = players == 0 ? PLAYER_1_POS : PLAYER_2_POS;
     const float y = 300.0f;
     registry->AddComponent(playerEntityId, TransformComponent { x, y, 20.0f, 100.0f });     
     registry->AddComponent(playerEntityId, InputComponent { false, false });
     registry->AddComponent(playerEntityId, MovementComponent { 0.0f, 0.0f });
-    registry->AddComponent(playerEntityId, CollisionComponent { 20.0f, 100.0f, CollisionType::Static });
+    registry->AddComponent(playerEntityId, CollisionComponent { 20.0f, 100.0f, CollisionType::Static, CollisionTag::Paddle });
 
+    // Goal
     const int goalEntityId = registry->AddEntity();
     registry->AddComponent(goalEntityId, TransformComponent { x - (5 * players), 0.0f, 5.0f, 800.0f });
-    registry->AddComponent(goalEntityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static });
+    registry->AddComponent(goalEntityId, CollisionComponent { 15.0f, 1000.0f, CollisionType::Static, CollisionTag::Goal });
     registry->AddComponent(goalEntityId, GoalComponent {0, players + 1});  
 
     ++players;

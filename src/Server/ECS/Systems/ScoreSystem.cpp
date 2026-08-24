@@ -12,16 +12,16 @@ void ScoreSystem::UpdateComponents(Registry& registry, const std::vector<Collisi
 {
     for (size_t i = 0; i < collisionEvents.size(); ++i)
     {
-        int entityA = collisionEvents[i].entityA;
-        int entityB = collisionEvents[i].entityB;
+        CollisionData entityA = collisionEvents[i].entityA;
+        CollisionData entityB = collisionEvents[i].entityB;
 
-        if (registry.HasComponent<BallComponent>(entityA) && registry.HasComponent<GoalComponent>(entityB))
+        if (entityA.collisionTag == CollisionTag::Ball && entityB.collisionTag == CollisionTag::Goal)
         {
-            HandleGoal(entityA, entityB, registry);
+            HandleGoal(entityA.entityId, entityB.entityId, registry);
         }
-        else if (registry.HasComponent<BallComponent>(entityB) && registry.HasComponent<GoalComponent>(entityA))
+        else if (entityB.collisionTag == CollisionTag::Goal && entityA.collisionTag == CollisionTag::Ball)
         {
-            HandleGoal(entityB, entityA, registry);
+            HandleGoal(entityA.entityId, entityB.entityId, registry);
         }
     }
 }

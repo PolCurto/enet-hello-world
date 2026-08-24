@@ -69,8 +69,11 @@ target_link_libraries(GameClient PRIVATE
 	winmm wsock32 ws2_32
 )
 
+add_custom_command(TARGET GameClient POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:GameClient>/assets"
+)
+
 target_include_directories(GameClient PRIVATE src/Shared)
 target_include_directories(GameServer PRIVATE src/Shared)
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets 
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

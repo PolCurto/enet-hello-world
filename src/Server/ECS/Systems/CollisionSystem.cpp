@@ -35,23 +35,11 @@ const std::vector<CollisionEvent>& CollisionSystem::UpdateComponents(const std::
                                 transform.y + transform.h < otherTransform.y ||
                                 transform.y > otherTransform.y + otherTransform.h);
 
-            // TODO: Remove this from here, raise a collisionEvent with tags and handle in each system
             if (isColliding)
             {
-                if (collision.type == CollisionType::Bounce && registry.HasComponent<MovementComponent>(entityIds[i]))
-                {
-                    MovementComponent& comp = registry.GetComponent<MovementComponent>(entityIds[i]);
-                    comp.speedX = -comp.speedX;
-                    comp.speedY = -comp.speedY;
-                }
-                else if (collision.type == CollisionType::Static && registry.HasComponent<MovementComponent>(entityIds[i]))
-                {
-                    MovementComponent& comp = registry.GetComponent<MovementComponent>(entityIds[i]);
-                    comp.speedX = 0;
-                    comp.speedY = 0;
-                }
-
-                collisionEvents.push_back({entityIds[i], entityIds[j]});
+                CollisionData entityA = { entityIds[i], collision.type, collision.tag };
+                CollisionData entityB = { entityIds[j], otherCollision.type, otherCollision.tag };
+                collisionEvents.push_back({ entityA, entityB });
             }
         }
     }
