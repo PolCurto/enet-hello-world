@@ -20,7 +20,7 @@ NetworkSystem::~NetworkSystem()
 {
 }
 
-bool NetworkSystem::Init()
+bool NetworkSystem::Init(const char* hostIp, const int port)
 {
     if (!EnetInit())
     {
@@ -32,7 +32,7 @@ bool NetworkSystem::Init()
         return false;
     }
 
-    if (!SetupPeer())
+    if (!SetupPeer(hostIp, port))
     {
         return false;
     }
@@ -89,14 +89,12 @@ bool NetworkSystem::SetupHost()
     return true;
 }
 
-bool NetworkSystem::SetupPeer()
+bool NetworkSystem::SetupPeer(const char* hostIp, const int port)
 {
-    // Configurar la direcci�n del servidor a donde nos queremos conectar
     ENetAddress address;
-    enet_address_set_host(&address, "127.0.0.1"); // Localhost
+    enet_address_set_host(&address, "127.0.0.1");
     address.port = 8000;
 
-    // Iniciar la conexi�n hacia el servidor (en el Canal 2)
     peer = enet_host_connect(client, &address, 2, 0);
     if (!peer)
     {

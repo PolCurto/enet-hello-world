@@ -18,14 +18,14 @@ public:
 	NetworkSystem();
 	~NetworkSystem();
 
-	bool Init();
+	bool Init(const char* hostIp, const int port);
 	GameState Update(const EngineContext& engineContext);
 	void Exit();
 
 private:
 	bool EnetInit();
 	bool SetupHost();
-	bool SetupPeer();
+	bool SetupPeer(const char* hostIp, const int port);
 	bool ConnectToServer();
 
 	void SendInputData(const PlayerInputPacket& inputData);

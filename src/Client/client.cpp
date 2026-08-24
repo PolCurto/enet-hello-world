@@ -10,10 +10,20 @@
 #include "NetworkSystem.h"
 #include "RenderSystem.h"
 
-// TODO: MOVE WINDOW TO SYSTEM
-
-int main()
+int main(int argc, char* argv[])
 {
+	std::string serverIP = "127.0.0.1";
+    enet_uint16 serverPort = 12345;
+
+	if (argc > 1)
+	{
+        serverIP = argv[1];
+    }
+    if (argc > 2)
+	{
+        serverPort = static_cast<enet_uint16>(std::atoi(argv[2]));
+    }
+
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
     {
         std::cerr << "Error crítico al inicializar SDL global: " << SDL_GetError() << std::endl;
@@ -38,7 +48,7 @@ int main()
 			{
 				std::cout << "[CLIENT] Init.\n";
 
-				if (!inputSystem->Init() || !networkSystem->Init() || !renderSystem->Init())
+				if (!inputSystem->Init() || !networkSystem->Init(serverIP.c_str(), serverPort) || !renderSystem->Init())
 				{
 					gameState = GameState::Exit;
 					break;
@@ -77,7 +87,7 @@ int main()
 			}
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Avoid busy waiting, sleep for a short duration to yield CPU time
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	delete networkSystem;
